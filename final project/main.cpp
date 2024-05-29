@@ -29,7 +29,6 @@ int main() {
     //     }
     // }
     
-    
 
     for (const auto& net : nets) {
         cout << "Net ID: " << net.ID << endl;
