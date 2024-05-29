@@ -20,7 +20,6 @@ int main() {
 
     // readDefFile(defFilePath, components);
     
-    
     // for (const auto& block : blocks) {
     //     cout << "Block Name: " << block.block_name << endl;
     //     cout << "Block through_block_net_num: " << block.through_block_net_num << endl;
