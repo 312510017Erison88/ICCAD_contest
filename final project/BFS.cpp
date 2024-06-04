@@ -19,6 +19,7 @@ bool isValid(int x, int y, int rows, int cols) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
+
 vector<Point_2> BFS(Point_2 start, Point_2 goal, vector<vector<int>> grid) {
     // initailization
     int rows = grid.size();
@@ -50,23 +51,17 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, vector<vector<int>> grid) {
         }
     }
 
-    // backtrace
+    return backtrack(start, goal);
+}
+
+vector<Point_2> backtrack(Point_2 start, Point_2 goal) {
     vector<Point_2> path;
+
     for (Point_2 at = goal; at.x != -1; at = parent[at.x][at.y]) {
         path.push_back(at);
     }
     reverse(path.begin(), path.end());
     return path;
 }
-
-// vector<Point_2> backtrack(Point_2 start, Point_2 goal) {
-//     vector<Point_2> path;
-
-//     for (Point_2 at = goal; at.x != -1; at = parent[at.x][at.y]) {
-//         path.push_back(at);
-//     }
-//     reverse(path.begin(), path.end());
-//     return path;
-// }
 
 

@@ -77,38 +77,73 @@ int main() {
 
 
 
+    // for input parameters
+    vector<vector<int>> grid;
+    int row_num = diearea.x2;
+    int col_num = diearea.y2;
+    grid = vector<vector<int>>(row_num, vector<int>(col_num, 0));
+
+    /*
+        arr=0 : free
+        arr=-1 : has block
+        arr=n : net number
+    */
+    for(int i=0; i < row_num; i++){
+        for(int j=0; j< col_num; j++){
+            cout << grid[i][j] << " " << endl;
+        }
+        cout << endl;
+    }
+
+    // set block
+    // for(const auto& b : blockList) {
+    //     for(int i = b[0]; i <= b[1]; i++) {
+    //         for(int j = b[2]; j <= b[3]; j++) {
+    //             arr[j][i] = -1;
+    //         }
+    //     }
+    // }
+
+    // for(int i=1; i < netList.size(); i++) {     // go through netList row size
+    //     arr[netList[i][1]][netList[i][0]] = i;
+    //     arr[netList[i][3]][netList[i][2]] = i;
+    // }
+
+
+
+
 
 
     // for BFS.cpp
     // grid = vector<vector<int>>(rows, vector<int>(cols, 0));
     //  1: obstacles, 0: can pass
-    vector<vector<int>> grid;
-    grid = {
-        {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 1, 1, 1, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 1, 1, 1},
-        {0, 1, 0, 0, 0, 1, 0, 0, 0, 0}
-    };
-    // (1, 0) is downward, (0, 1) is go right 
+    // vector<vector<int>> grid;
+    // grid = {
+    //     {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+    //     {0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+    //     {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
+    //     {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+    //     {1, 1, 0, 0, 1, 0, 0, 0, 0, 0},
+    //     {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+    //     {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
+    //     {0, 0, 0, 1, 0, 1, 1, 1, 0, 0},
+    //     {1, 1, 0, 0, 0, 0, 0, 1, 1, 1},
+    //     {0, 1, 0, 0, 0, 1, 0, 0, 0, 0}
+    // };
+    // // (1, 0) is downward, (0, 1) is go right 
 
-    Point_2 start(0, 0);
-    Point_2 goal(9, 9);
+    // Point_2 start(0, 0);
+    // Point_2 goal(9, 9);
 
-    vector<Point_2> path;
-    path = BFS(start, goal, grid);
+    // vector<Point_2> path;
+    // path = BFS(start, goal, grid);
     
 
-    cout << "Path: ";
-    for (auto p : path) {
-        cout << "(" << p.x << "," << p.y << ") ";
-    }
-    cout << endl;
+    // cout << "Path: ";
+    // for (auto p : path) {
+    //     cout << "(" << p.x << "," << p.y << ") ";
+    // }
+    // cout << endl;
 
     return 0;
 

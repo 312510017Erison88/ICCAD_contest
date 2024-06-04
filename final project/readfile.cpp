@@ -98,18 +98,6 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
         }
     }
 
-
-    // std::string line;
-    // while (std::getline(defFile, line)) {
-    //     if (line.find("COMPONENTS") != std::string::npos) {
-    //         std::istringstream iss(line);
-    //         std::string temp;
-    //         iss >> temp >> num_Comp;
-    //         break;
-    //     }
-    // }
-
-
     while (std::getline(defFile, line)) {
         if (line.find("END COMPONENTS") != std::string::npos) {
             break;
@@ -144,8 +132,7 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
 
 }
 
-
-// ?��??DEF���}�ѪRDIEAREA��
+// read def file
 std::vector<Point> readCompFile(const std::string& compFilePath) {
     std::ifstream compFile(compFilePath);
     if (!compFile.is_open()) {
@@ -160,10 +147,9 @@ std::vector<Point> readCompFile(const std::string& compFilePath) {
             std::istringstream iss(line1);
             std::string token;
 
-            // ��?"DIEAREA"
+            // "DIEAREA"
             iss >> token;
 
-            // ?��??��?
             while (iss >> token) {
                 if (token == "(") {
                     Point pt;
@@ -182,4 +168,6 @@ std::vector<Point> readCompFile(const std::string& compFilePath) {
 
     return vertices;
 }
+
+
 

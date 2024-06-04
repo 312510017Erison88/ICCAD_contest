@@ -21,6 +21,7 @@ struct Cell {
 
 bool isValid(int x, int y, int rows, int cols);
 vector<Point_2> BFS(Point_2 start, Point_2 goal, vector<vector<int>> grid);
+vector<Point_2> backtrack(Point_2 start, Point_2 goal);
 
 
 #endif
