@@ -1,0 +1,12 @@
+[
+    {
+      "ID":0,
+      "TX":"REGION_12",
+      "RX":["BLOCK_8"],
+      "NUM":247,
+      "MUST_THROUGH":{},
+      "HMFT_MUST_THROUGH":{},
+      "TX_COORD":[6140.000,2660.000],
+      "RX_COORD":[[239.000,271.000]]
+    }
+]

@@ -9,6 +9,11 @@
 
 using namespace std;
 
+struct Point {
+    int x;
+    int y;
+};
+
 struct Block {
     string block_name;
     int through_block_net_num;
@@ -16,6 +21,9 @@ struct Block {
     vector<int> block_port_region;
     bool is_feedthroughable;
     bool is_tile;
+    Point position;
+    vector<Point> vertices;
+
 };
 
 struct Net {
@@ -31,7 +39,7 @@ struct Net {
 
 struct Component {
     string name;
-    string macro;
+    string blocktype;
     int x;
     int y;
     string orientation;
@@ -52,15 +60,21 @@ struct DieArea {
     int y2;
 };
 
-struct Point {
-    int x;
-    int y;
+
+struct OnlyBlock {
+    string name;
+    vector<Point> vertices;
 };
+
 
 
 
 void readJsonFiles(const string& blockFilePath, const string& netFilePath, vector<Block>& block, vector<Net>& nets);
 void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea);
-std::vector<Point> readCompFile(const std::string& compFilePath);
+void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks);
+
+Point rotatePoint(const Point& pt, const Point& origin, int angle);
+Point reflectPoint(const Point& pt, const Point& origin, bool isYAxis);
+vector<Point> transformVertices(const vector<Point>& vertices, const Point& origin, const string& orientation);
 
 #endif

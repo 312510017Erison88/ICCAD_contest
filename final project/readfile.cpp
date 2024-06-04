@@ -98,6 +98,18 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
         }
     }
 
+
+    // std::string line;
+    // while (std::getline(defFile, line)) {
+    //     if (line.find("COMPONENTS") != std::string::npos) {
+    //         std::istringstream iss(line);
+    //         std::string temp;
+    //         iss >> temp >> num_Comp;
+    //         break;
+    //     }
+    // }
+
+
     while (std::getline(defFile, line)) {
         if (line.find("END COMPONENTS") != std::string::npos) {
             break;
@@ -106,7 +118,7 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
             Component comp;
             std::istringstream iss(line);
             std::string temp;
-            iss >> temp >> comp.name >> comp.macro >> temp >> temp >> temp >> comp.x >> comp.y >> temp >> comp.orientation;
+            iss >> temp >> comp.name >> comp.blocktype >> temp >> temp >> temp >> comp.x >> comp.y >> temp >> comp.orientation;
             components.push_back(comp);
         }
     }
@@ -132,41 +144,122 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
 
 }
 
-// read def file
-std::vector<Point> readCompFile(const std::string& compFilePath) {
+
+
+void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks) {
     std::ifstream compFile(compFilePath);
-    if (!compFile.is_open()) {
-        std::cerr << "Could not open the file: " << compFilePath << std::endl;
-        return {};
-    }
+    // check if the paths can found
+    // if (!compFile.is_open()) {
+    //     std::cerr << "Could not open the file: " << compFilePath << std::endl;
+    // }
 
     std::string line1;
-    std::vector<Point> vertices;
+    OnlyBlock onlyb;
     while (std::getline(compFile, line1)) {
+        std::istringstream iss(line1);
+        std::string temp1;
+        if (line1.find("DESIGN") != std::string::npos) {
+            iss >> temp1 >> onlyb.name;
+        }
         if (line1.find("DIEAREA") != std::string::npos) {
             std::istringstream iss(line1);
             std::string token;
 
-            // "DIEAREA"
+            // ��?"DIEAREA"
             iss >> token;
 
+            // ?��??��?
             while (iss >> token) {
                 if (token == "(") {
                     Point pt;
                     iss >> pt.x >> pt.y;
-                    vertices.push_back(pt);
+                    onlyb.vertices.push_back(pt);
                 } else if (token == ")") {
                     continue;
                 } else {
                     break;
                 }
             }
-
+            onlyblocks.push_back(onlyb);
             break; // Assuming only one DIEAREA line1 per file
         }
     }
+}
 
-    return vertices;
+Point rotatePoint(const Point& pt, const Point& origin, int angle) {
+    int x = pt.x - origin.x;
+    int y = pt.y - origin.y;
+    int newX, newY;
+
+    switch (angle) {
+        case 90:
+            newX = -y;
+            newY = x;
+            break;
+        case 180:
+            newX = -x;
+            newY = -y;
+            break;
+        case 270:
+            newX = y;
+            newY = -x;
+            break;
+        default:
+            newX = x;
+            newY = y;
+            break;
+    }
+
+    return {newX + origin.x, newY + origin.y};
+}
+
+Point reflectPoint(const Point& pt, const Point& origin, bool isYAxis) {
+    int x = pt.x - origin.x;
+    int y = pt.y - origin.y;
+    if (isYAxis) {
+        x = -x;
+    } else {
+        y = -y;
+    }
+    return {x + origin.x, y + origin.y};
+}
+
+vector<Point> transformVertices(const vector<Point>& vertices, const Point& origin, const string& orientation) {
+    vector<Point> newVertices;
+
+    for (const auto& vertex : vertices) {
+        Point transformedVertex = vertex;
+        Point newVertex = vertex;
+        if (orientation == "N") {
+            // No rotation
+            newVertex.x = origin.x + transformedVertex.x;
+            newVertex.y = origin.y + transformedVertex.y;
+
+        } else if (orientation == "S") {
+            // transformedVertex = rotatePoint(vertex, origin, 180);
+            newVertex.x = origin.x - transformedVertex.x;
+            newVertex.y = origin.y - transformedVertex.y;
+        } else if (orientation == "W") {
+            // transformedVertex = rotatePoint(vertex, origin, 90);
+            newVertex.x = origin.x - transformedVertex.y;
+            newVertex.y = origin.y + transformedVertex.x;
+        } else if (orientation == "E") {
+            // transformedVertex = rotatePoint(vertex, origin, 270);
+            newVertex.x = origin.x + transformedVertex.y;
+            newVertex.y = origin.y - transformedVertex.x;
+        } else if (orientation == "FN") {
+            newVertex = reflectPoint(vertex, origin, true);
+        } else if (orientation == "FS") {
+            newVertex = reflectPoint(vertex, origin, false);
+        } else if (orientation == "FW") {
+            newVertex = reflectPoint(rotatePoint(vertex, origin, 90), origin, false);
+        } else if (orientation == "FE") {
+            newVertex = reflectPoint(rotatePoint(vertex, origin, 270), origin, true);
+        }
+        newVertices.push_back(newVertex);
+    }
+
+    return newVertices;
 }
 
 
