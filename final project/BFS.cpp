@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm> // Include this header for std::reverse
+#include "BFS.h"
 
 using namespace std;
 
@@ -9,33 +10,21 @@ const int INF = 10000000;
 const int dx[4] = {1, -1, 0, 0}; // Directions: up, down, left, right
 const int dy[4] = {0, 0, 1, -1};
 
-struct Point {
-    int x, y;
-    Point(int _x, int _y) : x(_x), y(_y) {}
-};
 
-struct Cell {
-    int x, y, dist;
-    Cell(int _x, int _y, int _dist) : x(_x), y(_y), dist(_dist) {}
-    bool operator<(const Cell& other) const {
-        return dist > other.dist; // Min-heap based on distance
-    }
-};
-
-vector<vector<int>> grid;
+// vector<vector<int>> grid;
 vector<vector<int>> dist;
-vector<vector<Point>> parent;
+vector<vector<Point_2>> parent;
 
 bool isValid(int x, int y, int rows, int cols) {
-    return x >= 0 && x < cols && y >= 0 && y < rows;
+    return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
-void mikamiTabuchi(Point start, Point goal) {
+vector<Point_2> BFS(Point_2 start, Point_2 goal, vector<vector<int>> grid) {
     // initailization
     int rows = grid.size();
     int cols = grid[0].size();
     dist = vector<vector<int>>(rows, vector<int>(cols, INF));
-    parent = vector<vector<Point>>(rows, vector<Point>(cols, Point(-1, -1)));
+    parent = vector<vector<Point_2>>(rows, vector<Point_2>(cols, Point_2(-1, -1)));
     
     priority_queue<Cell> pq;
     pq.push(Cell(start.x, start.y, 0));
@@ -55,52 +44,29 @@ void mikamiTabuchi(Point start, Point goal) {
             // dist[][] is original diatance
             if (isValid(nx, ny, rows, cols) && grid[ny][nx] == 0 && dist[nx][ny] > dist[current.x][current.y] + 1) {
                 dist[nx][ny] = dist[current.x][current.y] + 1;
-                parent[nx][ny] = Point(current.x, current.y);
+                parent[nx][ny] = Point_2(current.x, current.y);
                 pq.push(Cell(nx, ny, dist[nx][ny]));
             }
         }
     }
-}
 
-vector<Point> backtrack(Point start, Point goal) {
-    vector<Point> path;
-
-    for (Point at = goal; at.x != -1; at = parent[at.x][at.y]) {
+    // backtrace
+    vector<Point_2> path;
+    for (Point_2 at = goal; at.x != -1; at = parent[at.x][at.y]) {
         path.push_back(at);
     }
     reverse(path.begin(), path.end());
     return path;
 }
 
-int main() {
-    // grid = vector<vector<int>>(rows, vector<int>(cols, 0));
-    //  1: obstacles, 0: can pass
-    grid = {
-        {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 0, 1, 0, 1, 1, 1, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 1, 1, 1},
-        {0, 1, 0, 0, 0, 1, 0, 0, 0, 0}
-    };
-    // (1, 0) is downward, (0, 1) is go right 
+// vector<Point_2> backtrack(Point_2 start, Point_2 goal) {
+//     vector<Point_2> path;
 
-    Point start(0, 0);
-    Point goal(9, 9);
+//     for (Point_2 at = goal; at.x != -1; at = parent[at.x][at.y]) {
+//         path.push_back(at);
+//     }
+//     reverse(path.begin(), path.end());
+//     return path;
+// }
 
-    mikamiTabuchi(start, goal);
-    vector<Point> path = backtrack(start, goal);
-
-    cout << "Path: ";
-    for (auto p : path) {
-        cout << "(" << p.x << "," << p.y << ") ";
-    }
-    cout << endl;
-
-    return 0;
-}
 
