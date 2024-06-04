@@ -37,8 +37,30 @@ struct Component {
     string orientation;
 };
 
-void readJsonFiles(const string& blockFilePath, const string& netFilePath, vector<Block>& block, vector<Net>& nets);
-void readDefFile(const std::string& defFilePath, std::vector<Component>& components);
+struct Region {
+    string name;
+    int x1;
+    int y1;
+    int x2;
+    int y2; 
+};
 
+struct DieArea {
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+};
+
+struct Point {
+    int x;
+    int y;
+};
+
+
+
+void readJsonFiles(const string& blockFilePath, const string& netFilePath, vector<Block>& block, vector<Net>& nets);
+void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea);
+std::vector<Point> readCompFile(const std::string& compFilePath);
 
 #endif
