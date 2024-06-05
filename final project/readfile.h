@@ -76,8 +76,8 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
 void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks);
 
 void WidthHeight(std::vector<OnlyBlock>& onlyb);
-Point rotatePoint(const Point& pt, const Point& origin, int angle);
-Point reflectPoint(const Point& pt, const Point& origin, bool isYAxis);
-vector<Point> transformVertices(const vector<Point>& vertices, const Point& origin, const string& orientation);
+Point rotatePoint(const Point& pt, int angle, const int& width, const int& height);
+Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height);
+vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation);
 
 #endif

@@ -215,23 +215,23 @@ void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyb
     }
 }
 
-Point rotatePoint(const Point& pt, const Point& origin, int angle) {
-    int x = pt.x - origin.x;
-    int y = pt.y - origin.y;
+Point rotatePoint(const Point& pt, int angle, const int& width, const int& height) {
+    int x = pt.x;
+    int y = pt.y;
     int newX, newY;
 
     switch (angle) {
         case 90:
-            newX = -y;
+            newX = -y + height;
             newY = x;
             break;
         case 180:
-            newX = -x;
-            newY = -y;
+            newX = -x + width;
+            newY = -y + height;
             break;
         case 270:
             newX = y;
-            newY = -x;
+            newY = -x + width;
             break;
         default:
             newX = x;
@@ -239,21 +239,31 @@ Point rotatePoint(const Point& pt, const Point& origin, int angle) {
             break;
     }
 
-    return {newX + origin.x, newY + origin.y};
+    return {newX, newY};
 }
 
-Point reflectPoint(const Point& pt, const Point& origin, bool isYAxis) {
-    int x = pt.x - origin.x;
-    int y = pt.y - origin.y;
+Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height) {
+    // int x = pt.x - origin.x;
+    // int y = pt.y - origin.y;
+    // if (isYAxis) {
+    //     x = -x;
+    // } else {
+    //     y = -y;
+    // }
+    // return {x + origin.x, y + origin.y};
+
+    int x = pt.x;
+    int y = pt.y;
     if (isYAxis) {
-        x = -x;
+        x = -x + width;
     } else {
-        y = -y;
+        y = -y + height;
     }
-    return {x + origin.x, y + origin.y};
+    return {x, y};
+
 }
 
-vector<Point> transformVertices(const vector<Point>& vertices, const Point& origin, const string& orientation) {
+vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation) {
     vector<Point> newVertices;
 
     for (const auto& vertex : vertices) {
@@ -266,24 +276,47 @@ vector<Point> transformVertices(const vector<Point>& vertices, const Point& orig
 
         } else if (orientation == "S") {
             // transformedVertex = rotatePoint(vertex, origin, 180);
-            newVertex.x = origin.x - transformedVertex.x;
-            newVertex.y = origin.y - transformedVertex.y;
+            // newVertex.x = origin.x - transformedVertex.x;
+            // newVertex.y = origin.y - transformedVertex.y;
+            newVertex = rotatePoint(vertex, 180, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "W") {
             // transformedVertex = rotatePoint(vertex, origin, 90);
-            newVertex.x = origin.x - transformedVertex.y;
-            newVertex.y = origin.y + transformedVertex.x;
+            // newVertex.x = origin.x - transformedVertex.y;
+            // newVertex.y = origin.y + transformedVertex.x;
+            newVertex = rotatePoint(vertex, 90, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "E") {
             // transformedVertex = rotatePoint(vertex, origin, 270);
-            newVertex.x = origin.x + transformedVertex.y;
-            newVertex.y = origin.y - transformedVertex.x;
+            // newVertex.x = origin.x + transformedVertex.y;
+            // newVertex.y = origin.y - transformedVertex.x;
+            newVertex = rotatePoint(vertex, 270, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "FN") {
-            newVertex = reflectPoint(vertex, origin, true);
+            newVertex = reflectPoint(vertex, true, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "FS") {
-            newVertex = reflectPoint(vertex, origin, false);
+            newVertex = reflectPoint(vertex, false, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "FW") {
-            newVertex = reflectPoint(rotatePoint(vertex, origin, 90), origin, false);
+            newVertex = reflectPoint(rotatePoint(vertex, 90, width, height), false, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
+
         } else if (orientation == "FE") {
-            newVertex = reflectPoint(rotatePoint(vertex, origin, 270), origin, true);
+            newVertex = reflectPoint(rotatePoint(vertex, 270, width, height), true, width, height);
+            newVertex.x = newVertex.x + origin.x;
+            newVertex.y = newVertex.y + origin.y;
         }
         newVertices.push_back(newVertex);
     }

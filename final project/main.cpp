@@ -180,7 +180,7 @@ int main() {
             Block block;
             block.block_name = component.name;
             block.position = {component.x, component.y};
-            block.vertices = transformVertices(it->vertices, block.position, component.orientation);
+            block.vertices = transformVertices(it->vertices, it->width, it->height, block.position, component.orientation);
             blockList.push_back(block);
         }
     }
