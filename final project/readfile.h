@@ -64,6 +64,8 @@ struct DieArea {
 struct OnlyBlock {
     string name;
     vector<Point> vertices;
+    int width;
+    int height;
 };
 
 
@@ -73,6 +75,7 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
 void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea);
 void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks);
 
+void WidthHeight(std::vector<OnlyBlock>& onlyb);
 Point rotatePoint(const Point& pt, const Point& origin, int angle);
 Point reflectPoint(const Point& pt, const Point& origin, bool isYAxis);
 vector<Point> transformVertices(const vector<Point>& vertices, const Point& origin, const string& orientation);

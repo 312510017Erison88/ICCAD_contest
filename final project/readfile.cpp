@@ -4,6 +4,7 @@
 #include <vector>
 #include "nlohmann/json.hpp"
 #include "readfile.h"
+#include <climits>  // For INT_MIN and INT_MAX
 
 using json = nlohmann::json;
 using namespace std;
@@ -144,6 +145,33 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
 
 }
 
+// Calculate the width and height of a component
+void WidthHeight(OnlyBlock& onlyb) {
+
+    // Initialize the MIN and MAX of X and Y axis
+    int minX = INT_MAX, maxX = INT_MIN;
+    int minY = INT_MAX, maxY = INT_MIN;
+
+    //for (auto& block : onlyb) {
+        for (const auto& vertex : onlyb.vertices) {
+            if (vertex.x < minX) minX = vertex.x;
+            if (vertex.x > maxX) maxX = vertex.x;
+            if (vertex.y < minY) minY = vertex.y;
+            if (vertex.y > maxY) maxY = vertex.y;
+        }
+        onlyb.width = maxX - minX;
+        onlyb.height = maxY - minY;
+    //}
+
+    // Calculate the lengths
+    //width = maxX - minX;
+    //height = maxY - minY;
+
+    // print
+    //std::cout << "width: " << width << std::endl;
+    //std::cout << "height: " << height << std::endl;
+}
+
 
 
 void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks) {
@@ -180,6 +208,7 @@ void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyb
                     break;
                 }
             }
+            WidthHeight(onlyb);
             onlyblocks.push_back(onlyb);
             break; // Assuming only one DIEAREA line1 per file
         }

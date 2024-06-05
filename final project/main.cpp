@@ -150,6 +150,15 @@ int main() {
         readCompFile(path, onlyblocks);
     }
 
+    for (const auto& block : onlyblocks) {
+        std::cout << "Block Name: " << block.name << std::endl;
+        for (const auto& pt : block.vertices) {
+            std::cout << "Vertex: (" << pt.x << ", " << pt.y << ")" << std::endl;
+        }
+        std::cout << "(Width, Height): " << block.width << ", "<< block.height << std::endl;
+        std::cout << std::endl;
+    }
+
     // Print components for verification
     // cout << "Components:" << endl;
     // for (const auto& component : components) {
