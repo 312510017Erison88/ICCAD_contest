@@ -15,4 +15,4 @@ do1:
 	./$(BINS) 
 
 clean:
-	rm -rf $(BINS) $(OBJS) 
+	rm -rf $(BINS) $(OBJS) *.csv
