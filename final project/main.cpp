@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <algorithm> // for find_if 
 #include "readfile.h"
@@ -117,7 +118,12 @@ using namespace std;
 
 // }
 
-
+// function used in output of plotting csv file
+std::string pointToString(const Point& point) {
+    std::ostringstream oss;
+    oss << point.x << ";" << point.y;
+    return oss.str();
+}
 
 
 int main() {
@@ -205,6 +211,19 @@ int main() {
     //     }
     //     cout << endl;
     // }
+
+
+    // output plotting csv file, called "blocks.csv"
+    std::ofstream file("blocks.csv");
+    for (const auto& block : blockList) {
+        file << block.block_name << ",";
+        for (const auto& pt : block.vertices) {
+            file << pointToString(pt);
+            file << ",";
+        }
+        file << "\n";
+    }
+    file.close();
 
 
     return 0;
