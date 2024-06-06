@@ -12,7 +12,7 @@ $(BINS): main.cpp $(OBJS)
 	$(CC) $(CFLAGS) -fopenmp $^ -o $@
 
 do1:
-	./$(BINS) 
+	./$(BINS)
 
 clean:
 	rm -rf $(BINS) $(OBJS) *.csv

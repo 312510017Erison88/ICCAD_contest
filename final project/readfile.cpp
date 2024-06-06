@@ -193,10 +193,9 @@ void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyb
             std::istringstream iss(line1);
             std::string token;
 
-            // ��?"DIEAREA"
+            // "DIEAREA"
             iss >> token;
 
-            // ?��??��?
             while (iss >> token) {
                 if (token == "(") {
                     Point pt;

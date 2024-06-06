@@ -119,8 +119,8 @@ using namespace std;
 // }
 
 // function used in output of plotting csv file
-std::string pointToString(const Point& point) {
-    std::ostringstream oss;
+string pointToString(const Point& point) {
+    ostringstream oss;
     oss << point.x << ";" << point.y;
     return oss.str();
 }
@@ -177,7 +177,7 @@ int main() {
     // }
 
 
-    
+    // Build Block
     vector<Block> blockList;
 
     for (const auto& component : components) {
@@ -202,7 +202,7 @@ int main() {
 
 
 
-    // // Print onlyblocks for verification
+    // Print onlyblocks for verification
     // cout << "OnlyBlocks:" << endl;
     // for (const auto& onlyblock : onlyblocks) {
     //     cout << "Name: " << onlyblock.name << ", Vertices: ";
@@ -213,8 +213,10 @@ int main() {
     // }
 
 
+
+
     // output plotting csv file, called "blocks.csv"
-    std::ofstream file("blocks.csv");
+    ofstream file("blocks.csv");
     for (const auto& block : blockList) {
         file << block.block_name << ",";
         for (const auto& pt : block.vertices) {

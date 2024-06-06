@@ -16,11 +16,11 @@ struct Point {
 
 struct Block {
     string block_name;
-    int through_block_net_num;
-    vector<int> through_block_edge_net_num;
-    vector<int> block_port_region;
-    bool is_feedthroughable;
-    bool is_tile;
+    int through_block_net_num;      // max num that net can feedthrough
+    vector<int> through_block_edge_net_num;     
+    vector<int> block_port_region;     // 任意Net要經過這個block，就一定要從block_port_region經過, 如果為空就don't care
+    bool is_feedthroughable;        // this block feedthrough or not
+    bool is_tile;                   // don't care
     Point position;
     vector<Point> vertices;
 
@@ -28,13 +28,13 @@ struct Block {
 
 struct Net {
     int ID;
-    string TX;
-    vector<string> RX;
-    int NUM;
-    map<string, vector<int>> MUST_THROUGH;
-    map<string, vector<int>> HMFT_MUST_THROUGH;
-    vector<float> TX_COORD;
-    vector<vector<float>> RX_COORD;
+    string TX;      // starting block
+    vector<string> RX;      // target block
+    int NUM;                // how much tracks that this net will use
+    map<string, vector<int>> MUST_THROUGH;      // this net must through
+    map<string, vector<int>> HMFT_MUST_THROUGH;     // must go through non-feedthrough block
+    vector<float> TX_COORD;                 // corordinate that starting block shift
+    vector<vector<float>> RX_COORD;          // corordinate that target block shift
 };
 
 struct Component {
@@ -75,7 +75,7 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
 void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea);
 void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks);
 
-void WidthHeight(std::vector<OnlyBlock>& onlyb);
+void WidthHeight(OnlyBlock& onlyb);
 Point rotatePoint(const Point& pt, int angle, const int& width, const int& height);
 Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height);
 vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation);
