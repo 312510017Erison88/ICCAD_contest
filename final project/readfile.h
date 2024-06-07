@@ -1,5 +1,5 @@
-#ifndef _READFILE_H_
-#define _READFILE_H_
+#ifndef READFILE_H_
+#define READFILE_H_
 
 #include <iostream>
 #include <fstream>

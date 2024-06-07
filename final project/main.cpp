@@ -3,6 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm> // for find_if 
+#include <map>
 #include "readfile.h"
 // #include "linesearch.h"
 #include "BFS.h"
@@ -138,7 +139,7 @@ int main() {
 
     // File path
     string blockFilePath = "case4/case4_cfg.json";
-    string netFilePath = "case4/case4.json";
+    string netFilePath = "case4/case4_small.json";
     string defFilePath = "case4/case4_def/chip_top.def";
 
     readJsonFiles(blockFilePath, netFilePath, blocks, nets);
@@ -213,6 +214,24 @@ int main() {
     // }
 
 
+    // perform BFS
+    map<int, vector<vector<Point_2>>> netPaths;
+    for (const auto& net : nets) {
+        Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
+        for (const auto& rx_coord : net.RX_COORD) {
+            Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
+            vector<Point_2> path = BFS(start, goal, blockList, net);
+            // Process the path as needed
+            netPaths[net.ID].push_back(path);
+        }
+    }
+    // print all stored paths
+    for (const auto& netPath : netPaths) {
+        cout << "Net ID: " << netPath.first << endl;
+        for (const auto& path : netPath.second) {
+            printPath(path);
+        }
+    }
 
 
     // output plotting csv file, called "blocks.csv"
