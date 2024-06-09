@@ -13,8 +13,8 @@ const int dy[4] = {0, 0, 1, -1};
 
 
 // vector<vector<int>> grid;
-vector<vector<int>> dist;
-vector<vector<Point_2>> parent;
+// vector<vector<int>> dist;
+// vector<vector<Point_2>> parent;
 
 bool isValid(int x, int y, int rows, int cols) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
