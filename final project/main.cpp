@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <algorithm> // for find_if 
@@ -226,12 +227,15 @@ int main() {
         }
     }
     // print all stored paths
+    ofstream pathfile("path.csv");
     for (const auto& netPath : netPaths) {
-        cout << "Net ID: " << netPath.first << endl;
+        pathfile << "Net ID: " << netPath.first << endl;
         for (const auto& path : netPath.second) {
-            printPath(path);
+            printPath(path, pathfile);
         }
+        
     }
+    pathfile.close();
 
 
     // output plotting csv file, called "blocks.csv"

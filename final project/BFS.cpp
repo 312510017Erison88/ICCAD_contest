@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm> // Include this header for std::reverse
+#include <fstream>
 #include "BFS.h"
 
 
@@ -21,6 +22,7 @@ bool isValid(int x, int y, int rows, int cols) {
 }
 
 
+// ray-casting algorithm
 bool isPointInsideBlock(const Point_2& pt, const Block& block) {
     int n = block.vertices.size();  // Number of vertices in the polygon
     int j = n - 1;                  // Index of the last vertex
@@ -40,8 +42,10 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block) {
 bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
     for (const auto& block : blockList) {
         if (isPointInsideBlock(to, block)) {
-            if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 && 
-                find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end())) {
+            if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 
+                // checks if the current net's ID (net.ID) is not in the list of allowed nets for this block edge 
+                //&&find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end()
+            )){
                 return false;
             }
         }
@@ -87,11 +91,11 @@ vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_
     return path;
 }
 
-void printPath(const vector<Point_2>& path) {
+void printPath(const vector<Point_2>& path, ofstream& file) {
     for (const auto& point : path) {
-        cout << "(" << point.x << ", " << point.y << ") ";
+        file << "(" << point.x << ", " << point.y << ") ";
     }
-    cout << endl;
+    file << endl;
 }
 
 // original version
