@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-# Your imports and code follow
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-# 讀取CSV資料
+# read blocks.csv
 blocks = []
 with open('blocks.csv', 'r') as file:
     for line in file:
@@ -19,6 +17,25 @@ with open('blocks.csv', 'r') as file:
                     print("Error converting vertex:", vertex)
         blocks.append({'block_name': block_name, 'vertices': vertices})
 
+# read path.csv
+net_paths = []
+with open('path.csv', 'r') as file:
+    for line in file:
+        if line.startswith("Net ID:"):
+            net_id = line.strip().split(' ')[-1]
+        else:
+            vertices = []
+            points = line.strip().split(') (')
+            for point in points:
+                if point:
+                    x, y = point.strip('()').split(',')
+                    try:
+                        vertices.append((int(x), int(y)))
+                    except ValueError:
+                        print("Error converting point:", point)
+            net_paths.append(vertices)
+
+
 # 創建一個繪圖
 fig, ax = plt.subplots(dpi=300)
 
@@ -31,6 +48,11 @@ for block in blocks:
     centroid_x = sum([v[0] for v in vertices]) / len(vertices)
     centroid_y = sum([v[1] for v in vertices]) / len(vertices)
     ax.text(centroid_x, centroid_y, block['block_name'], ha='center', va='center', fontsize=3)
+
+# 繪製每個網絡路徑
+for path in net_paths:
+    xs, ys = zip(*path)
+    ax.plot(xs, ys, color='blue', linewidth=1.5)
 
 # 設置圖形範圍
 ax.set_xlim(0, 12440136)

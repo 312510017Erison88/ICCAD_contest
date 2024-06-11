@@ -213,6 +213,8 @@ int main() {
     //     }
     //     cout << endl;
     // }
+    int ROW = diearea.x2;
+    int COL = diearea.y2;
 
 
     // perform BFS
@@ -221,7 +223,7 @@ int main() {
         Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
         for (const auto& rx_coord : net.RX_COORD) {
             Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
-            vector<Point_2> path = BFS(start, goal, blockList, net);
+            vector<Point_2> path = BFS(start, goal, blockList, net, ROW, COL);
             // Process the path as needed
             netPaths[net.ID].push_back(path);
         }
