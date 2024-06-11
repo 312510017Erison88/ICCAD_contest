@@ -10,26 +10,11 @@
 
 using namespace std;
 
-// struct Point_2 {
-//     int x, y;
-//      // Define comparison operators for use in std::map
-//     bool operator<(const Point_2& other) const {
-//         return tie(x, y) < tie(other.x, other.y);
-//     }
-// };
-// Define Point_2 with hash and equality operator
 struct Point_2 {
     int x, y;
-    
-    bool operator==(const Point_2& other) const {
-        return x == other.x && y == other.y;
-    }
-};
-
-// Define hash function for Point_2
-struct Point_2_Hash {
-    size_t operator()(const Point_2& pt) const {
-        return hash<int>()(pt.x) ^ (hash<int>()(pt.y) << 1);
+     // Define comparison operators for use in std::map
+    bool operator<(const Point_2& other) const {
+        return tie(x, y) < tie(other.x, other.y);
     }
 };
 
@@ -54,7 +39,7 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block);
 bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net);
 // vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net);
 vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL);
-vector<Point_2> backtrack(Point_2 start, Point_2 goal, const unordered_map<Point_2, Point_2, Point_2_Hash>& parent);
+vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent);
 void printPath(const vector<Point_2>& path, ofstream& file);
 
 

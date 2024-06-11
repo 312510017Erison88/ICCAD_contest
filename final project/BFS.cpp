@@ -53,8 +53,8 @@ bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockL
 
 vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
     queue<Cell> q;
-    unordered_map<Point_2, int, Point_2_Hash> dist;
-    unordered_map<Point_2, Point_2, Point_2_Hash> parent;
+    map<Point_2, int> dist;
+    map<Point_2, Point_2> parent;
 
     q.push(Cell{start.x, start.y, 0});
     dist[start] = 0;
@@ -80,7 +80,7 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList,
     return backtrack(start, goal, parent);
 }
 
-vector<Point_2> backtrack(Point_2 start, Point_2 goal, const unordered_map<Point_2, Point_2, Point_2_Hash>& parent) {
+vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent) {
     vector<Point_2> path;
     for (Point_2 at = goal; at.x != -1; at = parent.at(at)) {
         path.push_back(at);
