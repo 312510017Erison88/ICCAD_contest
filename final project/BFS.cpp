@@ -140,10 +140,3 @@ void printPath(const vector<Point_2>& path, ofstream& file) {
 //     reverse(path.begin(), path.end());
 //     return path;
 // }
-
-
-
-
-
-
-//trytry
