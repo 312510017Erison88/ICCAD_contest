@@ -142,3 +142,8 @@ void printPath(const vector<Point_2>& path, ofstream& file) {
 // }
 
 
+
+
+
+
+//trytry
