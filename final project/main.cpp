@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <sstream>
 #include <vector>
 #include <algorithm> // for find_if 
+#include <map>
 #include "readfile.h"
 // #include "linesearch.h"
 #include "BFS.h"
@@ -119,8 +121,8 @@ using namespace std;
 // }
 
 // function used in output of plotting csv file
-std::string pointToString(const Point& point) {
-    std::ostringstream oss;
+string pointToString(const Point& point) {
+    ostringstream oss;
     oss << point.x << ";" << point.y;
     return oss.str();
 }
@@ -138,7 +140,7 @@ int main() {
 
     // File path
     string blockFilePath = "case4/case4_cfg.json";
-    string netFilePath = "case4/case4.json";
+    string netFilePath = "case4/case4_small.json";
     string defFilePath = "case4/case4_def/chip_top.def";
 
     readJsonFiles(blockFilePath, netFilePath, blocks, nets);
@@ -177,7 +179,7 @@ int main() {
     // }
 
 
-    
+    // Build Block
     vector<Block> blockList;
 
     for (const auto& component : components) {
@@ -202,7 +204,7 @@ int main() {
 
 
 
-    // // Print onlyblocks for verification
+    // Print onlyblocks for verification
     // cout << "OnlyBlocks:" << endl;
     // for (const auto& onlyblock : onlyblocks) {
     //     cout << "Name: " << onlyblock.name << ", Vertices: ";
@@ -211,10 +213,35 @@ int main() {
     //     }
     //     cout << endl;
     // }
+    int ROW = diearea.x2;
+    int COL = diearea.y2;
+
+
+    // perform BFS
+    map<int, vector<vector<Point_2>>> netPaths;
+    for (const auto& net : nets) {
+        Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
+        for (const auto& rx_coord : net.RX_COORD) {
+            Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
+            vector<Point_2> path = BFS(start, goal, blockList, net, ROW, COL);
+            // Process the path as needed
+            netPaths[net.ID].push_back(path);
+        }
+    }
+    // print all stored paths
+    ofstream pathfile("path.csv");
+    for (const auto& netPath : netPaths) {
+        pathfile << "Net ID: " << netPath.first << endl;
+        for (const auto& path : netPath.second) {
+            printPath(path, pathfile);
+        }
+        
+    }
+    pathfile.close();
 
 
     // output plotting csv file, called "blocks.csv"
-    std::ofstream file("blocks.csv");
+    ofstream file("blocks.csv");
     for (const auto& block : blockList) {
         file << block.block_name << ",";
         for (const auto& pt : block.vertices) {
