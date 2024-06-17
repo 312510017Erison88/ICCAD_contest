@@ -37,7 +37,6 @@ bool isValid(int x, int y, int rows, int cols);
 ////////////////////////////////////////////////////////////////
 bool isPointInsideBlock(const Point_2& pt, const Block& block);
 bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net);
-// vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net);
 vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL);
 vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent);
 void printPath(const vector<Point_2>& path, ofstream& file);

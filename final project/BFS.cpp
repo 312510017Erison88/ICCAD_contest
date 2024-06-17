@@ -22,6 +22,19 @@ bool isValid(int x, int y, int rows, int cols) {
 
 // ray-casting algorithm
 bool isPointInsideBlock(const Point_2& pt, const Block& block) {
+    // Check if the point is within the bounding box of the polygon
+    int min_x = block.vertices[0].x, max_x = block.vertices[0].x;
+    int min_y = block.vertices[0].y, max_y = block.vertices[0].y;
+    for (const auto& vertex : block.vertices) {
+        min_x = min(min_x, vertex.x);
+        max_x = max(max_x, vertex.x);
+        min_y = min(min_y, vertex.y);
+        max_y = max(max_y, vertex.y);
+    }
+    if (pt.x < min_x || pt.x > max_x || pt.y < min_y || pt.y > max_y) {
+        return false;
+    }
+    
     int n = block.vertices.size();  // Number of vertices in the polygon
     int j = n - 1;                  // Index of the last vertex
     bool inside = false;
