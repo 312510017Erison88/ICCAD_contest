@@ -11,6 +11,7 @@ const int dx[4] = {1, -1, 0, 0}; // Directions: up, down, left, right
 const int dy[4] = {0, 0, 1, -1};
 
 
+
 // vector<vector<int>> grid;
 // vector<vector<int>> dist;
 // vector<vector<Point_2>> parent;
@@ -108,6 +109,8 @@ void printPath(const vector<Point_2>& path, ofstream& file) {
     }
     file << endl;
 }
+
+
 
 // original version
 // vector<Point_2> BFS(Point_2 start, Point_2 goal, vector<vector<int>> grid) {
