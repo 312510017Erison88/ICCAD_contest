@@ -45,22 +45,18 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block) {
     return inside;
 }
 
-void preprocessBlockAreas(unordered_set<Point_2>& nonTraversableSet, const vector<Block>& blockList, int ROW, int COL) {
+bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
     for (const auto& block : blockList) {
-        for (int x = 0; x < ROW; ++x) {
-            for (int y = 0; y < COL; ++y) {
-                Point_2 pt{x, y};
-                if (isPointInsideBlock(pt, block) && (!block.is_feedthroughable || 
-                    (block.through_block_edge_net_num.size() > 0 /*&& find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end()*/))) {
-                    nonTraversableSet.insert(pt);
-                }
+        if (isPointInsideBlock(to, block)) {
+            if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 
+                // checks if the current net's ID (net.ID) is not in the list of allowed nets for this block edge 
+                //&&find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end()
+            )){
+                return false;
             }
         }
     }
-}
-
-bool canMove(const Point_2& to, const unordered_set<Point_2>& nonTraversableSet) {
-    return nonTraversableSet.find(to) == nonTraversableSet.end();
+    return true;
 }
 
 int heuristic(const Point_2& a, const Point_2& b) {
@@ -68,12 +64,9 @@ int heuristic(const Point_2& a, const Point_2& b) {
 }
 
 vector<Point_2> AStar(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
-    unordered_set<Point_2> nonTraversableSet;
-    preprocessBlockAreas(nonTraversableSet, blockList, ROW, COL);
-
     priority_queue<Cell> openSet;
-    unordered_map<Point_2, int> gScore, fScore;
-    unordered_map<Point_2, Point_2> parent;
+    map<Point_2, int> gScore, fScore;
+    map<Point_2, Point_2> parent;
 
     openSet.push(Cell{start.x, start.y, 0});
     gScore[start] = 0;
@@ -85,12 +78,12 @@ vector<Point_2> AStar(Point_2 start, Point_2 goal, const vector<Block>& blockLis
         openSet.pop();
         Point_2 currentPoint{current.x, current.y};
 
-        if (currentPoint == goal) break;
+        if (currentPoint.x == goal.x && currentPoint.y == goal.y) break;
 
         for (int i = 0; i < 4; i++) {
             Point_2 next = {current.x + dx[i], current.y + dy[i]};
             
-            if (isValid(next.x, next.y, ROW, COL) && canMove(next, nonTraversableSet)) {
+            if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, blockList, net)) {
                 int tentative_gScore = gScore[currentPoint] + 1;
                 if (gScore.find(next) == gScore.end() || tentative_gScore < gScore[next]) {
                     parent[next] = currentPoint;
@@ -105,7 +98,7 @@ vector<Point_2> AStar(Point_2 start, Point_2 goal, const vector<Block>& blockLis
     return backtrack(start, goal, parent);
 }
 
-vector<Point_2> backtrack(Point_2 start, Point_2 goal, const unordered_map<Point_2, Point_2>& parent) {
+vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent) {
     vector<Point_2> path;
     for (Point_2 at = goal; at.x != -1; at = parent.at(at)) {
         path.push_back(at);
@@ -120,3 +113,4 @@ void printPath(const vector<Point_2>& path, ofstream& file) {
     }
     file << endl;
 }
+

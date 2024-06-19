@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -g -Wall -O3
-OBJS = readfile.o BFS.o
+OBJS = readfile.o Astar.o
 BINS = FP
 
 all: $(BINS)

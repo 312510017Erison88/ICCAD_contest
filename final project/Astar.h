@@ -13,26 +13,18 @@ using namespace std;
 
 struct Point_2 {
     int x, y;
-     // Define comparison operators for use in std::map
+    // Define comparison operators for use in std::map
+    bool operator<(const Point_2& other) const {
+        return tie(x, y) < tie(other.x, other.y);
+    }
+    
     bool operator==(const Point_2& other) const {
         return x == other.x && y == other.y;
     }
 };
 
-namespace std {
-    template <>
-    struct hash<Point_2> {
-        size_t operator()(const Point_2& pt) const {
-            return hash<int>()(pt.x) ^ hash<int>()(pt.y);
-        }
-    };
-}
-
 struct Cell {
     int x, y, dist;
-    bool operator<(const Cell& other) const {
-        return dist > other.dist;
-    }
 };
 
 
