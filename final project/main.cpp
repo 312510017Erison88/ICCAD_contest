@@ -7,8 +7,8 @@
 #include <map>
 #include "readfile.h"
 // #include "linesearch.h"
-// #include "BFS.h"
-#include "Astar.h"
+#include "BFS.h"
+// #include "Astar.h"
 
 using namespace std;
 
@@ -224,8 +224,8 @@ int main() {
         Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
         for (const auto& rx_coord : net.RX_COORD) {
             Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
-            // vector<Point_2> path = BFS(start, goal, blockList, net, ROW, COL);
-            vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
+            vector<Point_2> path = BFS(start, goal, blockList, net, ROW, COL);
+            // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
             netPaths[net.ID].push_back(path);
         }
     }

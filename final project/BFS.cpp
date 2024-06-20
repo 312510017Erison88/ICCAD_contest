@@ -11,11 +11,6 @@ const int dx[4] = {1, -1, 0, 0}; // Directions: up, down, left, right
 const int dy[4] = {0, 0, 1, -1};
 
 
-
-// vector<vector<int>> grid;
-// vector<vector<int>> dist;
-// vector<vector<Point_2>> parent;
-
 bool isValid(int x, int y, int rows, int cols) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
 }
@@ -51,21 +46,33 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block) {
     return inside;
 }
 
-bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
-    for (const auto& block : blockList) {
-        if (isPointInsideBlock(to, block)) {
-            if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 
-                // checks if the current net's ID (net.ID) is not in the list of allowed nets for this block edge 
-                //&&find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end()
-            )){
-                return false;
-            }
+// bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
+//     for (const auto& block : blockList) {
+//         if (isPointInsideBlock(to, block)) {
+//             if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 
+//                 // checks if the current net's ID (net.ID) is not in the list of allowed nets for this block edge 
+//                 //&&find(block.through_block_edge_net_num.begin(), block.through_block_edge_net_num.end(), net.ID) == block.through_block_edge_net_num.end()
+//             )){
+//                 return false;
+//             }
+//         }
+//     }
+//     return true;
+// }
+
+bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net) {
+    if (edgeMap.find({to.x, to.y}) != edgeMap.end()) {
+        int blockId = edgeMap.at({to.x, to.y});
+        const Block& block = blockMap.at(blockId);
+        if (!block.is_feedthroughable || block.through_block_net_num <= 0) {
+            return false;
         }
     }
     return true;
 }
 
-vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
+
+vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL) {
     queue<Cell> q;
     map<Point_2, int> dist;
     map<Point_2, Point_2> parent;
@@ -77,22 +84,57 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList,
     while (!q.empty()) {
         Cell current = q.front();
         q.pop();
-        
+
         if (current.x == goal.x && current.y == goal.y) break;
-        
+
         for (int i = 0; i < 4; i++) {
             Point_2 next = {current.x + dx[i], current.y + dy[i]};
-            
-            if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, blockList, net) && dist.find(next) == dist.end()) {
+
+            if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, edgeMap, blockMap, net) && dist.find(next) == dist.end()) {
                 dist[next] = dist[Point_2{current.x, current.y}] + 1;
                 parent[next] = Point_2{current.x, current.y};
                 q.push(Cell{next.x, next.y, dist[next]});
+
+                if (edgeMap.find({next.x, next.y}) != edgeMap.end()) {
+                    int blockId = edgeMap.at({next.x, next.y});
+                    blockMap[blockId].through_block_net_num -= 1;
+                    cout << "Updating thr_block_net_num at " << blockId << " block!" << endl;
+                }
             }
         }
     }
 
     return backtrack(start, goal, parent);
 }
+
+// vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
+//     queue<Cell> q;
+//     map<Point_2, int> dist;
+//     map<Point_2, Point_2> parent;
+
+//     q.push(Cell{start.x, start.y, 0});
+//     dist[start] = 0;
+//     parent[start] = Point_2{-1, -1};
+
+//     while (!q.empty()) {
+//         Cell current = q.front();
+//         q.pop();
+        
+//         if (current.x == goal.x && current.y == goal.y) break;
+        
+//         for (int i = 0; i < 4; i++) {
+//             Point_2 next = {current.x + dx[i], current.y + dy[i]};
+            
+//             if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, blockList, net) && dist.find(next) == dist.end()) {
+//                 dist[next] = dist[Point_2{current.x, current.y}] + 1;
+//                 parent[next] = Point_2{current.x, current.y};
+//                 q.push(Cell{next.x, next.y, dist[next]});
+//             }
+//         }
+//     }
+
+//     return backtrack(start, goal, parent);
+// }
 
 vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent) {
     vector<Point_2> path;

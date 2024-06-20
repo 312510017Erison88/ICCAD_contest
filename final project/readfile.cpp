@@ -142,6 +142,26 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
 
 }
 
+void completeRectangle(OnlyBlock& block) {
+    if (block.vertices.size() == 2) {
+        Point p1 = block.vertices[0];
+        Point p2 = block.vertices[1];
+
+        // Calculate the other two vertices
+        Point p3 = {p1.x, p2.y};
+        Point p4 = {p2.x, p1.y};
+
+        // Clear the existing vertices
+        block.vertices.clear();
+
+        // Add the vertices in the order p1 -> p4 -> p2 -> p3
+        block.vertices.push_back(p1);
+        block.vertices.push_back(p4);
+        block.vertices.push_back(p2);
+        block.vertices.push_back(p3);
+    }
+}
+
 // Calculate the width and height of a component
 void WidthHeight(OnlyBlock& onlyb) {
 
@@ -205,6 +225,7 @@ void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyb
                 }
             }
             WidthHeight(onlyb);
+            completeRectangle(onlyb);
             onlyblocks.push_back(onlyb);
             break; // Assuming only one DIEAREA line1 per file
         }

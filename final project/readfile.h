@@ -75,6 +75,7 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
 void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea);
 void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks);
 
+void completeRectangle(OnlyBlock& block);
 void WidthHeight(OnlyBlock& onlyb);
 Point rotatePoint(const Point& pt, int angle, const int& width, const int& height);
 Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height);
