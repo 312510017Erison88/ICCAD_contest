@@ -11,6 +11,18 @@ const int dx[4] = {1, -1, 0, 0}; // Directions: up, down, left, right
 const int dy[4] = {0, 0, 1, -1};
 
 
+void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<int, int>, int, pair_hash> &edgeMap, unordered_map<int, Block> &blockMap) {
+    // Populate edgeMap and blockMap with your data
+    // This is just an example; you'll need to adapt this to your actual data
+    for (size_t i = 0; i < blockList.size(); ++i) {
+        const Block& block = blockList[i];
+        for (const auto& vertex : block.vertices) {
+            edgeMap[{vertex.x, vertex.y}] = i;
+        }
+        blockMap[i] = block;
+    }
+}
+
 bool isValid(int x, int y, int rows, int cols) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
 }

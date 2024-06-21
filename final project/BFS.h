@@ -46,6 +46,8 @@ using Coordinate = pair<int, int>;
 using BlockMap = unordered_map<int, Block>;
 using EdgeMap = unordered_map<Coordinate, int>;
 
+
+void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<int, int>, int, pair_hash> &edgeMap, unordered_map<int, Block> &blockMap);
 bool isValid(int x, int y, int rows, int cols);
 bool isPointInsideBlock(const Point_2& pt, const Block& block);
 bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net);
