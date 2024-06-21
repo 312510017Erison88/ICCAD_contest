@@ -159,7 +159,7 @@ vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_
 
 void printPath(const vector<Point_2>& path, ofstream& file) {
     for (const auto& point : path) {
-        file << "(" << point.x << ", " << point.y << ") ";
+        file << point.x << ";" << point.y << ",";
     }
     file << endl;
 }

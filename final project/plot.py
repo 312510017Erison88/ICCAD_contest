@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 import matplotlib.patches as patches
 
 # read blocks.csv
@@ -18,26 +19,52 @@ with open('blocks.csv', 'r') as file:
         blocks.append({'block_name': block_name, 'vertices': vertices})
 
 # read path.csv
-net_paths = []
+nets = []
 with open('path.csv', 'r') as file:
+    current_net = None
     for line in file:
-        if line.startswith("Net ID:"):
-            net_id = line.strip().split(' ')[-1]
-        else:
-            vertices = []
-            points = line.strip().split(') (')
+        line = line.strip()
+        if line.startswith('Net ID:'):
+            if current_net:
+                nets.append(current_net)
+            current_net = {'net_id': line.split(':')[1].strip(), 'paths': []}
+        elif line:
+            points = line.split(',')
+            path = []
             for point in points:
-                if point:
-                    x, y = point.strip('()').split(',')
-                    try:
-                        vertices.append((int(x), int(y)))
-                    except ValueError:
-                        print("Error converting point:", point)
-            net_paths.append(vertices)
+                try:
+                    x, y = point.split(';')
+                    path.append((int(x), int(y)))
+                except ValueError:
+                    print(f"Issue with point: {point}. Skipping.")
+            if path:
+                current_net['paths'].append(path)
+    if current_net:  # append the last net if exists
+        nets.append(current_net)
+
+### erison's code
+# read path.csv
+# net_paths = []
+# with open('path.csv', 'r') as file:
+#     for line in file:
+#         if line.startswith("Net ID:"):
+#             net_id = line.strip().split(' ')[-1]
+#         else:
+#             vertices = []
+#             points = line.strip().split(') (')
+#             for point in points:
+#                 if point:
+#                     x, y = point.strip('()').split(',')
+#                     try:
+#                         vertices.append((int(x), int(y)))
+#                     except ValueError:
+#                         print("Error converting point:", point)
+#             net_paths.append(vertices)
+#####
 
 
 # 創建一個繪圖
-fig, ax = plt.subplots(dpi=300)
+fig, ax = plt.subplots(dpi=300)     # 2000 dpi (suggest)
 
 # 繪製每個區塊
 for block in blocks:
@@ -49,17 +76,27 @@ for block in blocks:
     centroid_y = sum([v[1] for v in vertices]) / len(vertices)
     ax.text(centroid_x, centroid_y, block['block_name'], ha='center', va='center', fontsize=3)
 
+### erison's code
 # 繪製每個網絡路徑
-for path in net_paths:
-    xs, ys = zip(*path)
-    ax.plot(xs, ys, color='blue', linewidth=1.5)
+# for path in net_paths:
+#     xs, ys = zip(*path)
+#     ax.plot(xs, ys, color='blue', linewidth=1.5)
+#####
+
+# draw the path of each net
+for net in nets:
+    for path in net['paths']:
+        x_vals, y_vals = zip(*path)
+        line = mlines.Line2D(x_vals, y_vals, linewidth=1, color='b')
+        ax.add_line(line)
+
 
 # 設置圖形範圍
 ax.set_xlim(0, 12440136)
 ax.set_ylim(0, 10368720)
 
-# ax.set_xlim(0, 15440136)
-# ax.set_ylim(0, 15368720)
+# ax.set_xlim(0, 10000)
+# ax.set_ylim(0, 10000)
 
 ax.set_aspect('equal')
 
