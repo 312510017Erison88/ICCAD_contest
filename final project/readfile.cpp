@@ -135,7 +135,35 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
             Region reg;
             std::istringstream iss(row);
             std::string temp;
-            iss >> temp >> reg.name >> temp >> reg.x1 >> reg.y1 >> temp >> temp >> reg.x2 >> reg.y2;
+            iss >> temp >> reg.name;
+            while (iss >> temp) {
+                if (temp == "(") {
+                    Point pt;
+                    iss >> pt.x >> pt.y;
+                    reg.vertices.push_back(pt);
+                } else if (temp == ")") {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+            if (reg.vertices.size() == 2) {
+                Point p1 = reg.vertices[0];
+                Point p2 = reg.vertices[1];
+        
+                // Calculate the other two vertices
+                Point p3 = {p1.x, p2.y};
+                Point p4 = {p2.x, p1.y};
+        
+                // Clear the existing vertices
+                reg.vertices.clear();
+        
+                // Add the vertices in the order p1 -> p4 -> p2 -> p3
+                reg.vertices.push_back(p1);
+                reg.vertices.push_back(p4);
+                reg.vertices.push_back(p2);
+                reg.vertices.push_back(p3);
+            }
             regions.push_back(reg);
         }
     }

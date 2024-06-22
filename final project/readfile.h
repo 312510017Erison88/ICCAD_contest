@@ -18,7 +18,7 @@ struct Block {
     string block_name;
     int through_block_net_num;      // max num that net can feedthrough
     vector<int> through_block_edge_net_num;     
-    vector<int> block_port_region;     // 任意Net要經過這個block，就一定要從block_port_region經過, 如果為空就don't care
+    vector<int> block_port_region;     // 任�??Net�?�??????????block�?就�??�?�?�?block_port_region�????, �??????�空就don't care
     bool is_feedthroughable;        // this block feedthrough or not
     bool is_tile;                   // don't care
     Point position;
@@ -47,10 +47,7 @@ struct Component {
 
 struct Region {
     string name;
-    int x1;
-    int y1;
-    int x2;
-    int y2; 
+    vector<Point> vertices;
 };
 
 struct DieArea {

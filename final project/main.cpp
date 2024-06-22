@@ -218,31 +218,31 @@ int main() {
 
 
     // perform BFS
-    unordered_map<pair<int, int>, int, pair_hash> edgeMap;
-    unordered_map<int, Block> blockMap;
-    map<int, vector<vector<Point_2>>> netPaths;
-
-    populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
-
-    for (const auto& net : nets) {
-        Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
-        for (const auto& rx_coord : net.RX_COORD) {
-            Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
-            vector<Point_2> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
-            // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
-            netPaths[net.ID].push_back(path);
-        }
-    }
-    // print all stored paths
-    ofstream pathfile("path.csv");
-    for (const auto& netPath : netPaths) {
-        pathfile << "Net ID: " << netPath.first << endl;
-        for (const auto& path : netPath.second) {
-            printPath(path, pathfile);
-        }
-        
-    }
-    pathfile.close();
+    // unordered_map<pair<int, int>, int, pair_hash> edgeMap;
+    // unordered_map<int, Block> blockMap;
+    // map<int, vector<vector<Point_2>>> netPaths;
+// 
+    // populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
+// 
+    // for (const auto& net : nets) {
+    //     Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
+    //     for (const auto& rx_coord : net.RX_COORD) {
+    //         Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
+    //         vector<Point_2> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
+    //         // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
+    //         netPaths[net.ID].push_back(path);
+    //     }
+    // }
+    // // print all stored paths
+    // ofstream pathfile("path.csv");
+    // for (const auto& netPath : netPaths) {
+    //     pathfile << "Net ID: " << netPath.first << endl;
+    //     for (const auto& path : netPath.second) {
+    //         printPath(path, pathfile);
+    //     }
+    //     
+    // }
+    // pathfile.close();
 
 
     // output plotting csv file, called "blocks.csv"
@@ -256,6 +256,18 @@ int main() {
         file << "\n";
     }
     file.close();
+
+    // output plotting csv file, called "regions.csv"
+    ofstream regionfile("regions.csv");
+    for (const auto& region : regions) {
+        regionfile << region.name << ",";
+        for (const auto& pt : region.vertices) {
+            regionfile << pointToString(pt);
+            regionfile << ",";
+        }
+        regionfile << "\n";
+    }
+    regionfile.close();
 
 
     return 0;
