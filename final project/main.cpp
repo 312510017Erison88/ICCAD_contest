@@ -196,7 +196,7 @@ int main() {
         }
     }
     */
-   updateBlocksWithVertices(blockList, components, onlyblocks);
+    updateBlocksWithVertices(blockList, components, onlyblocks);
 
     // Print blockList for verification
     for (const auto& block : blockList) {
