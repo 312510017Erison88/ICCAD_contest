@@ -75,7 +75,7 @@ void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyb
 void completeRectangle(OnlyBlock& block);
 void WidthHeight(OnlyBlock& onlyb);
 Point rotatePoint(const Point& pt, int angle, const int& width, const int& height);
-Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height);
+Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height, bool haveRotate);
 vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation);
 
 #endif

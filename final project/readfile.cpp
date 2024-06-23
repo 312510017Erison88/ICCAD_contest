@@ -287,7 +287,7 @@ Point rotatePoint(const Point& pt, int angle, const int& width, const int& heigh
     return {newX, newY};
 }
 
-Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height) {
+Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height, bool haveRotate) {
     // int x = pt.x - origin.x;
     // int y = pt.y - origin.y;
     // if (isYAxis) {
@@ -299,10 +299,21 @@ Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& h
 
     int x = pt.x;
     int y = pt.y;
+    int blk_width;
+    int blk_height;
+
+    if (haveRotate) {
+        blk_width = height;
+        blk_height = width;
+    } else{
+        blk_width = width;
+        blk_height = height;
+    }
+
     if (isYAxis) {
-        x = -x + width;
+        x = -x + blk_width;
     } else {
-        y = -y + height;
+        y = -y + blk_height;
     }
     return {x, y};
 
@@ -344,22 +355,22 @@ vector<Point> transformVertices(const vector<Point>& vertices, const int& width,
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "FN") {
-            newVertex = reflectPoint(vertex, true, width, height);
+            newVertex = reflectPoint(vertex, true, width, height, false);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "FS") {
-            newVertex = reflectPoint(vertex, false, width, height);
+            newVertex = reflectPoint(vertex, false, width, height, false);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "FW") {
-            newVertex = reflectPoint(rotatePoint(vertex, 90, width, height), false, width, height);
+            newVertex = reflectPoint(rotatePoint(vertex, 90, width, height), false, width, height, true);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "FE") {
-            newVertex = reflectPoint(rotatePoint(vertex, 270, width, height), true, width, height);
+            newVertex = reflectPoint(rotatePoint(vertex, 270, width, height), true, width, height, true);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
         }
