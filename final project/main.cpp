@@ -130,7 +130,8 @@ string pointToString(const Point& point) {
 
 
 int main() {
-    vector<Block> blocks;
+    // vector<Block> blocks;
+    vector<Block> blockList;
     vector<Net> nets;
     vector<Component> components;
     vector<Region> regions;
@@ -144,7 +145,7 @@ int main() {
     string netFilePath = "case4/case4_small.json";
     string defFilePath = "case4/case4_def/chip_top.def";
 
-    readJsonFiles(blockFilePath, netFilePath, blocks, nets);
+    readJsonFiles(blockFilePath, netFilePath, blockList, nets);
     readDefFile(defFilePath, components, regions, num_Comp, UNITS_DISTANCE_MICRONS, diearea);
 
     // File path for individual DEF of component
@@ -181,8 +182,9 @@ int main() {
 
 
     // Build Block
-    vector<Block> blockList;
+    // vector<Block> blockList;
 
+/*
     for (const auto& component : components) {
         auto it = find_if(onlyblocks.begin(), onlyblocks.end(), [&](const OnlyBlock& ob) { return ob.name == component.blocktype; });
         if (it != onlyblocks.end()) {
@@ -193,6 +195,8 @@ int main() {
             blockList.push_back(block);
         }
     }
+    */
+   updateBlocksWithVertices(blockList, components, onlyblocks);
 
     // Print blockList for verification
     for (const auto& block : blockList) {
@@ -200,6 +204,7 @@ int main() {
         for (const auto& vertex : block.vertices) {
             cout << "(" << vertex.x << ", " << vertex.y << ") ";
         }
+        cout << "isFeedthroughable: " << block.is_feedthroughable;
         cout << endl;
     }
 
@@ -218,31 +223,31 @@ int main() {
 
 
     // perform BFS
-    unordered_map<pair<int, int>, int, pair_hash> edgeMap;
-    unordered_map<int, Block> blockMap;
-    map<int, vector<vector<Point_2>>> netPaths;
+    // unordered_map<pair<int, int>, int, pair_hash> edgeMap;
+    // unordered_map<int, Block> blockMap;
+    // map<int, vector<vector<Point_2>>> netPaths;
 
-    populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
+    // populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
 
-    for (const auto& net : nets) {
-        Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
-        for (const auto& rx_coord : net.RX_COORD) {
-            Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
-            vector<Point_2> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
-            // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
-            netPaths[net.ID].push_back(path);
-        }
-    }
+    // for (const auto& net : nets) {
+    //     Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
+    //     for (const auto& rx_coord : net.RX_COORD) {
+    //         Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
+    //         vector<Point_2> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
+    //         // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
+    //         netPaths[net.ID].push_back(path);
+    //     }
+    // }
     // print all stored paths
-    ofstream pathfile("path.csv");
-    for (const auto& netPath : netPaths) {
-        pathfile << "Net ID: " << netPath.first << endl;
-        for (const auto& path : netPath.second) {
-            printPath(path, pathfile);
-        }
+    // ofstream pathfile("path.csv");
+    // for (const auto& netPath : netPaths) {
+    //     pathfile << "Net ID: " << netPath.first << endl;
+    //     for (const auto& path : netPath.second) {
+    //         printPath(path, pathfile);
+    //     }
         
-    }
-    pathfile.close();
+    // }
+    // pathfile.close();
 
 
     // output plotting csv file, called "blocks.csv"

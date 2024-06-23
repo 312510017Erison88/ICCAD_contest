@@ -382,4 +382,18 @@ vector<Point> transformVertices(const vector<Point>& vertices, const int& width,
 
 
 
+void updateBlocksWithVertices(vector<Block>& blocks, const vector<Component>& components, const vector<OnlyBlock>& onlyblocks) {
+    for (const auto& component : components) {
+        auto it_block = find_if(blocks.begin(), blocks.end(), [&](const Block& block) { return block.block_name == component.name; });
+        if (it_block != blocks.end()) {
+            auto it_onlyblock = find_if(onlyblocks.begin(), onlyblocks.end(), [&](const OnlyBlock& ob) { return ob.name == component.blocktype; });
+            if (it_onlyblock != onlyblocks.end()) {
+                it_block->position = {component.x, component.y};
+                it_block->vertices = transformVertices(it_onlyblock->vertices, it_onlyblock->width, it_onlyblock->height, it_block->position, component.orientation);
+            }
+        }
+    }
+}
+
+
 

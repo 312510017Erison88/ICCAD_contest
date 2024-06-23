@@ -18,7 +18,7 @@ struct Block {
     string block_name;
     int through_block_net_num;      // max num that net can feedthrough
     vector<int> through_block_edge_net_num;     
-    vector<int> block_port_region;     // ä»»æ??Netè¦?ç¶??????????blockï¼?å°±ä??å®?è¦?å¾?block_port_regionç¶????, å¦??????ºç©ºå°±don't care
+    vector<int> block_port_region;     // ä»»ï¿½??Netï¿½?ï¿½??????????blockï¿½?å°±ï¿½??ï¿½?ï¿½?ï¿½?block_port_regionï¿½????, ï¿½??????ï¿½ç©ºå°±don't care
     bool is_feedthroughable;        // this block feedthrough or not
     bool is_tile;                   // don't care
     Point position;
@@ -77,5 +77,6 @@ void WidthHeight(OnlyBlock& onlyb);
 Point rotatePoint(const Point& pt, int angle, const int& width, const int& height);
 Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height, bool haveRotate);
 vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation);
+void updateBlocksWithVertices(vector<Block>& blocks, const vector<Component>& components, const vector<OnlyBlock>& onlyblocks);
 
 #endif
