@@ -6,35 +6,14 @@
 
 using namespace std;
 
-extern float UNITS_DISTANCE_MICRONS;
-#define STEP 10
-
-// const int INF = 10000000;
-// const float dx[4] = {1.0/UNITS_DISTANCE_MICRONS, -1.0/UNITS_DISTANCE_MICRONS, 0, 0}; // Directions: up, down, left, right
-// const float dy[4] = {0, 0, 1.0/UNITS_DISTANCE_MICRONS, -1.0/UNITS_DISTANCE_MICRONS};
-
-const float dx[4] = {static_cast<float>(1.0 * STEP), 
-                     static_cast<float>(-1.0 * STEP), 
-                     0.0f, 
-                     0.0f}; // Directions: up, down, left, right
-
-const float dy[4] = {0.0f, 
-                     0.0f, 
-                     static_cast<float>(1.0 * STEP), 
-                     static_cast<float>(-1.0 * STEP)};
-
-const float dx_small[4] = {static_cast<float>(1.0 / UNITS_DISTANCE_MICRONS), 
-                     static_cast<float>(-1.0 / UNITS_DISTANCE_MICRONS), 
-                     0.0f, 
-                     0.0f}; // Directions: up, down, left, right
-
-const float dy_small[4] = {0.0f, 
-                     0.0f, 
-                     static_cast<float>(1.0 / UNITS_DISTANCE_MICRONS), 
-                     static_cast<float>(-1.0 / UNITS_DISTANCE_MICRONS)};
+const int INF = 10000000;
+const int dx[4] = {1, -1, 0, 0}; // Directions: up, down, left, right
+const int dy[4] = {0, 0, 1, -1};
 
 
-void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<float, float>, int, pair_hash> &edgeMap, unordered_map<int, Block> &blockMap) {
+void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<int, int>, int, pair_hash> &edgeMap, unordered_map<int, Block> &blockMap) {
+    // Populate edgeMap and blockMap with your data
+    // This is just an example; you'll need to adapt this to your actual data
     for (size_t i = 0; i < blockList.size(); ++i) {
         const Block& block = blockList[i];
         for (const auto& vertex : block.vertices) {
@@ -44,40 +23,40 @@ void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<float,
     }
 }
 
-bool isValid(float x, float y, float rows, float cols) {
-    return x >= 0.0 && x < rows && y >= 0.0 && y < cols;
+bool isValid(int x, int y, int rows, int cols) {
+    return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
 
 // ray-casting algorithm
-// bool isPointInsideBlock(const Point_2& pt, const Block& block) {
-//     // Check if the point is within the bounding box of the polygon
-//     float min_x = block.vertices[0].x, max_x = block.vertices[0].x;
-//     float min_y = block.vertices[0].y, max_y = block.vertices[0].y;
-//     for (const auto& vertex : block.vertices) {
-//         min_x = min(min_x, vertex.x);
-//         max_x = max(max_x, vertex.x);
-//         min_y = min(min_y, vertex.y);
-//         max_y = max(max_y, vertex.y);
-//     }
-//     if (pt.x < min_x || pt.x > max_x || pt.y < min_y || pt.y > max_y) {
-//         return false;
-//     }
+bool isPointInsideBlock(const Point_2& pt, const Block& block) {
+    // Check if the point is within the bounding box of the polygon
+    int min_x = block.vertices[0].x, max_x = block.vertices[0].x;
+    int min_y = block.vertices[0].y, max_y = block.vertices[0].y;
+    for (const auto& vertex : block.vertices) {
+        min_x = min(min_x, vertex.x);
+        max_x = max(max_x, vertex.x);
+        min_y = min(min_y, vertex.y);
+        max_y = max(max_y, vertex.y);
+    }
+    if (pt.x < min_x || pt.x > max_x || pt.y < min_y || pt.y > max_y) {
+        return false;
+    }
     
-//     int n = block.vertices.size();  // Number of vertices in the polygon
-//     int j = n - 1;                  // Index of the last vertex
-//     bool inside = false;
-//     // Check if the point is between the y-coordinates of the current and previous vertices
-//     for (int i = 0; i < n; i++) {
-//         if ((block.vertices[i].y > pt.y) != (block.vertices[j].y > pt.y) &&
-//         // Check if the point is to the left of the line segment from vertices[j] to vertices[i]
-//             pt.x < (block.vertices[j].x - block.vertices[i].x) * (pt.y - block.vertices[i].y) / (block.vertices[j].y - block.vertices[i].y) + block.vertices[i].x) {
-//             inside = !inside;
-//         }
-//         j = i;
-//     }
-//     return inside;
-// }
+    int n = block.vertices.size();  // Number of vertices in the polygon
+    int j = n - 1;                  // Index of the last vertex
+    bool inside = false;
+    // Check if the point is between the y-coordinates of the current and previous vertices
+    for (int i = 0; i < n; i++) {
+        if ((block.vertices[i].y > pt.y) != (block.vertices[j].y > pt.y) &&
+        // Check if the point is to the left of the line segment from vertices[j] to vertices[i]
+            pt.x < (block.vertices[j].x - block.vertices[i].x) * (pt.y - block.vertices[i].y) / (block.vertices[j].y - block.vertices[i].y) + block.vertices[i].x) {
+            inside = !inside;
+        }
+        j = i;
+    }
+    return inside;
+}
 
 // bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
 //     for (const auto& block : blockList) {
@@ -93,7 +72,7 @@ bool isValid(float x, float y, float rows, float cols) {
 //     return true;
 // }
 
-bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<float, float>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net) {
+bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net) {
     if (edgeMap.find({to.x, to.y}) != edgeMap.end()) {
         int blockId = edgeMap.at({to.x, to.y});
         const Block& block = blockMap.at(blockId);
@@ -105,14 +84,14 @@ bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<fl
 }
 
 
-vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<float, float>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, float ROW, float COL) {
+vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL) {
     queue<Cell> q;
     map<Point_2, int> dist;
     map<Point_2, Point_2> parent;
 
     q.push(Cell{start.x, start.y, 0});
     dist[start] = 0;
-    parent[start] = Point_2{-1.0, -1.0};
+    parent[start] = Point_2{-1, -1};
 
     while (!q.empty()) {
         Cell current = q.front();
@@ -120,14 +99,10 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<float,
 
         if (current.x == goal.x && current.y == goal.y) break;
 
-
         for (int i = 0; i < 4; i++) {
             Point_2 next = {current.x + dx[i], current.y + dy[i]};
-        
-            cout << "next: (" << next.x << ", " << next.y << ")" << endl;
 
             if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, edgeMap, blockMap, net) && dist.find(next) == dist.end()) {
-                cout << "hi2" << endl;
                 dist[next] = dist[Point_2{current.x, current.y}] + 1;
                 parent[next] = Point_2{current.x, current.y};
                 q.push(Cell{next.x, next.y, dist[next]});
@@ -175,7 +150,7 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<float,
 
 vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent) {
     vector<Point_2> path;
-    for (Point_2 at = goal; at.x != -1.0; at = parent.at(at)) {
+    for (Point_2 at = goal; at.x != -1; at = parent.at(at)) {
         path.push_back(at);
     }
     reverse(path.begin(), path.end());

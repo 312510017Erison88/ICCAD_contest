@@ -6,8 +6,6 @@
 using json = nlohmann::json;
 using namespace std;
 
-extern float UNITS_DISTANCE_MICRONS;
-
 
 void readJsonFiles(const string& blockFilePath, const string& netFilePath, vector<Block>& blocks, vector<Net>& nets) {
    
@@ -37,7 +35,7 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
        block.block_name = item["block_name"];
        block.through_block_net_num = item["through_block_net_num"];
        block.through_block_edge_net_num = item["through_block_edge_net_num"].get<vector<int>>();
-       block.block_port_region = item["block_port_region"].get<vector<float>>();
+       block.block_port_region = item["block_port_region"].get<vector<int>>();
        block.is_feedthroughable = item["is_feedthroughable"] == "True";
        block.is_tile = item["is_tile"] == "False";
 
@@ -66,8 +64,8 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
        net.TX = item["TX"];
        net.RX = item["RX"].get<vector<string>>();
        net.NUM = item["NUM"];
-       net.MUST_THROUGH = item["MUST_THROUGH"].get<map<string, vector<float>>>();
-       net.HMFT_MUST_THROUGH = item["HMFT_MUST_THROUGH"].get<map<string, vector<float>>>();
+       net.MUST_THROUGH = item["MUST_THROUGH"].get<map<string, vector<int>>>();
+       net.HMFT_MUST_THROUGH = item["HMFT_MUST_THROUGH"].get<map<string, vector<int>>>();
        net.TX_COORD = item["TX_COORD"].get<vector<float>>();
        net.RX_COORD = item["RX_COORD"].get<vector<vector<float>>>();
 
@@ -75,73 +73,73 @@ void readJsonFiles(const string& blockFilePath, const string& netFilePath, vecto
    }
 }
 
-void readDefFile(const string& defFilePath, vector<Component>& components, vector<Region>& regions, int& num_Comp, float& UNITS_DISTANCE_MICRONS, DieArea& diearea) {
-    ifstream defFile(defFilePath);
+void readDefFile(const std::string& defFilePath, std::vector<Component>& components, std::vector<Region>& regions, int& num_Comp, int& UNITS_DISTANCE_MICRONS, DieArea& diearea) {
+    std::ifstream defFile(defFilePath);
     if (!defFile.is_open()) {
-        cerr << "Failed to open file: " << defFilePath << std::endl;
+        std::cerr << "Failed to open file: " << defFilePath << std::endl;
         return;
     }
 
-    string line;
-    while (getline(defFile, line)) {
-        istringstream iss(line);
-        string temp;
-        if (line.find("UNITS DISTANCE MICRONS") != string::npos) {
+    std::string line;
+    while (std::getline(defFile, line)) {
+        std::istringstream iss(line);
+        std::string temp;
+        if (line.find("UNITS DISTANCE MICRONS") != std::string::npos) {
             iss >> temp >> temp >> temp >> UNITS_DISTANCE_MICRONS;
         }
-        if (line.find("DIEAREA") != string::npos) {
+        if (line.find("DIEAREA") != std::string::npos) {
             iss >> temp >> temp >> diearea.x1 >> diearea.y1 >> temp >> temp >> diearea.x2 >> diearea.y2;
         }
-        
-        if (line.find("COMPONENTS") != string::npos) {
+        if (line.find("COMPONENTS") != std::string::npos) {
             iss >> temp >> num_Comp;
             break;
         }
     }
-    diearea.x1 /= UNITS_DISTANCE_MICRONS;
-    diearea.y1 /= UNITS_DISTANCE_MICRONS;
-    diearea.x2 /= UNITS_DISTANCE_MICRONS;
-    diearea.y2 /= UNITS_DISTANCE_MICRONS;
 
 
-    while (getline(defFile, line)) {
-        if (line.find("END COMPONENTS") != string::npos) {
+    // std::string line;
+    // while (std::getline(defFile, line)) {
+    //     if (line.find("COMPONENTS") != std::string::npos) {
+    //         std::istringstream iss(line);
+    //         std::string temp;
+    //         iss >> temp >> num_Comp;
+    //         break;
+    //     }
+    // }
+
+
+    while (std::getline(defFile, line)) {
+        if (line.find("END COMPONENTS") != std::string::npos) {
             break;
         }
         if (line[0] == '-') {
             Component comp;
-            istringstream iss(line);
-            string temp;
+            std::istringstream iss(line);
+            std::string temp;
             iss >> temp >> comp.name >> comp.blocktype >> temp >> temp >> temp >> comp.x >> comp.y >> temp >> comp.orientation;
-            
-            comp.x /= UNITS_DISTANCE_MICRONS;
-            comp.y /= UNITS_DISTANCE_MICRONS;
             components.push_back(comp);
         }
     }
 
-    string row;
-    while (getline(defFile, row)) {
-        if (row.find("REGIONS") != string::npos) {
+    std::string row;
+    while (std::getline(defFile, row)) {
+        if (row.find("REGIONS") != std::string::npos) {
             break;
         }
     }
-    while (getline(defFile, row)) {
-        if (row.find("END REGIONS") != string::npos) {
+    while (std::getline(defFile, row)) {
+        if (row.find("END REGIONS") != std::string::npos) {
             break;
         }
         if (row[0] == '-') {
             Region reg;
-            istringstream iss(row);
-            string temp;
+            std::istringstream iss(row);
+            std::string temp;
             iss >> temp >> reg.name;
             while (iss >> temp) {
                 if (temp == "(") {
                     Point pt;
                     iss >> pt.x >> pt.y;
-                    pt.x /= UNITS_DISTANCE_MICRONS;
-                    pt.y /= UNITS_DISTANCE_MICRONS;
-        
                     reg.vertices.push_back(pt);
                 } else if (temp == ")") {
                     continue;
@@ -196,10 +194,8 @@ void completeRectangle(OnlyBlock& block) {
 void WidthHeight(OnlyBlock& onlyb) {
 
     // Initialize the MIN and MAX of X and Y axis
-    float minX = LONG_MAX, maxX = LONG_MIN;
-    float minY = LONG_MAX, maxY = LONG_MIN;
-    // float minX = 10000000.0, maxX = 0.0001;
-    // float minY = 10000000.0, maxY = 0.0001;
+    int minX = INT_MAX, maxX = INT_MIN;
+    int minY = INT_MAX, maxY = INT_MIN;
 
     //for (auto& block : onlyb) {
         for (const auto& vertex : onlyb.vertices) {
@@ -223,24 +219,24 @@ void WidthHeight(OnlyBlock& onlyb) {
 
 
 
-void readCompFile(const string& compFilePath, vector<OnlyBlock>& onlyblocks) {
-    ifstream compFile(compFilePath);
+void readCompFile(const std::string& compFilePath, std::vector<OnlyBlock>& onlyblocks) {
+    std::ifstream compFile(compFilePath);
     // check if the paths can found
     // if (!compFile.is_open()) {
     //     std::cerr << "Could not open the file: " << compFilePath << std::endl;
     // }
 
-    string line1;
+    std::string line1;
     OnlyBlock onlyb;
-    while (getline(compFile, line1)) {
-        istringstream iss(line1);
-        string temp1;
-        if (line1.find("DESIGN") != string::npos) {
+    while (std::getline(compFile, line1)) {
+        std::istringstream iss(line1);
+        std::string temp1;
+        if (line1.find("DESIGN") != std::string::npos) {
             iss >> temp1 >> onlyb.name;
         }
-        if (line1.find("DIEAREA") != string::npos) {
-            istringstream iss(line1);
-            string token;
+        if (line1.find("DIEAREA") != std::string::npos) {
+            std::istringstream iss(line1);
+            std::string token;
 
             // "DIEAREA"
             iss >> token;
@@ -249,8 +245,6 @@ void readCompFile(const string& compFilePath, vector<OnlyBlock>& onlyblocks) {
                 if (token == "(") {
                     Point pt;
                     iss >> pt.x >> pt.y;
-                    pt.x /= UNITS_DISTANCE_MICRONS;
-                    pt.y /= UNITS_DISTANCE_MICRONS;
                     onlyb.vertices.push_back(pt);
                 } else if (token == ")") {
                     continue;
@@ -266,10 +260,10 @@ void readCompFile(const string& compFilePath, vector<OnlyBlock>& onlyblocks) {
     }
 }
 
-Point rotatePoint(const Point& pt, int angle, const float& width, const float& height) {
-    float x = pt.x;
-    float y = pt.y;
-    float newX, newY;
+Point rotatePoint(const Point& pt, int angle, const int& width, const int& height) {
+    int x = pt.x;
+    int y = pt.y;
+    int newX, newY;
 
     switch (angle) {
         case 90:
@@ -293,12 +287,20 @@ Point rotatePoint(const Point& pt, int angle, const float& width, const float& h
     return {newX, newY};
 }
 
-Point reflectPoint(const Point& pt, bool isYAxis, const float& width, const float& height, bool haveRotate) {
+Point reflectPoint(const Point& pt, bool isYAxis, const int& width, const int& height, bool haveRotate) {
+    // int x = pt.x - origin.x;
+    // int y = pt.y - origin.y;
+    // if (isYAxis) {
+    //     x = -x;
+    // } else {
+    //     y = -y;
+    // }
+    // return {x + origin.x, y + origin.y};
 
-    float x = pt.x;
-    float y = pt.y;
-    float blk_width;
-    float blk_height;
+    int x = pt.x;
+    int y = pt.y;
+    int blk_width;
+    int blk_height;
 
     if (haveRotate) {
         blk_width = height;
@@ -317,7 +319,7 @@ Point reflectPoint(const Point& pt, bool isYAxis, const float& width, const floa
 
 }
 
-vector<Point> transformVertices(const vector<Point>& vertices, const float& width, const float& height, const Point& origin, const string& orientation) {
+vector<Point> transformVertices(const vector<Point>& vertices, const int& width, const int& height, const Point& origin, const string& orientation) {
     vector<Point> newVertices;
 
     for (const auto& vertex : vertices) {
@@ -329,16 +331,25 @@ vector<Point> transformVertices(const vector<Point>& vertices, const float& widt
             newVertex.y = origin.y + transformedVertex.y;
 
         } else if (orientation == "S") {
+            // transformedVertex = rotatePoint(vertex, origin, 180);
+            // newVertex.x = origin.x - transformedVertex.x;
+            // newVertex.y = origin.y - transformedVertex.y;
             newVertex = rotatePoint(vertex, 180, width, height);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "W") {
+            // transformedVertex = rotatePoint(vertex, origin, 90);
+            // newVertex.x = origin.x - transformedVertex.y;
+            // newVertex.y = origin.y + transformedVertex.x;
             newVertex = rotatePoint(vertex, 90, width, height);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
 
         } else if (orientation == "E") {
+            // transformedVertex = rotatePoint(vertex, origin, 270);
+            // newVertex.x = origin.x + transformedVertex.y;
+            // newVertex.y = origin.y - transformedVertex.x;
             newVertex = rotatePoint(vertex, 270, width, height);
             newVertex.x = newVertex.x + origin.x;
             newVertex.y = newVertex.y + origin.y;
