@@ -12,7 +12,7 @@ $(BINS): main.cpp $(OBJS)
 	$(CC) $(CFLAGS) -fopenmp $^ -o $@
 
 do1:
-	./$(BINS)
+	./$(BINS) case4/case4_cfg.json case4/case4_small.json case4/case4_def/chip_top.def
 
 clean:
 	rm -rf $(BINS) $(OBJS) *.csv

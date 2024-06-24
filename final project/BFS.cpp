@@ -7,17 +7,28 @@
 using namespace std;
 
 extern float UNITS_DISTANCE_MICRONS;
+#define STEP 10
 
 // const int INF = 10000000;
 // const float dx[4] = {1.0/UNITS_DISTANCE_MICRONS, -1.0/UNITS_DISTANCE_MICRONS, 0, 0}; // Directions: up, down, left, right
 // const float dy[4] = {0, 0, 1.0/UNITS_DISTANCE_MICRONS, -1.0/UNITS_DISTANCE_MICRONS};
 
-const float dx[4] = {static_cast<float>(1.0 / UNITS_DISTANCE_MICRONS), 
-                     static_cast<float>(-1.0 / UNITS_DISTANCE_MICRONS), 
+const float dx[4] = {static_cast<float>(1.0 * STEP), 
+                     static_cast<float>(-1.0 * STEP), 
                      0.0f, 
                      0.0f}; // Directions: up, down, left, right
 
 const float dy[4] = {0.0f, 
+                     0.0f, 
+                     static_cast<float>(1.0 * STEP), 
+                     static_cast<float>(-1.0 * STEP)};
+
+const float dx_small[4] = {static_cast<float>(1.0 / UNITS_DISTANCE_MICRONS), 
+                     static_cast<float>(-1.0 / UNITS_DISTANCE_MICRONS), 
+                     0.0f, 
+                     0.0f}; // Directions: up, down, left, right
+
+const float dy_small[4] = {0.0f, 
                      0.0f, 
                      static_cast<float>(1.0 / UNITS_DISTANCE_MICRONS), 
                      static_cast<float>(-1.0 / UNITS_DISTANCE_MICRONS)};

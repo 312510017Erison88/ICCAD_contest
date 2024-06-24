@@ -129,7 +129,7 @@ string pointToString(const Point& point) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
     // vector<Block> blocks;
     vector<Block> blockList;
     vector<Net> nets;
@@ -141,13 +141,15 @@ int main() {
     vector<OnlyBlock> onlyblocks;
 
     // File path
-    string blockFilePath = "case4/case4_cfg.json";
-    string netFilePath = "case4/case4_small.json";
-    string defFilePath = "case4/case4_def/chip_top.def";
+    // string blockFilePath = "case4/case4_cfg.json";
+    // string netFilePath = "case4/case4_small.json";
+    // string defFilePath = "case4/case4_def/chip_top.def";
+    char *blockFilePath = argv[1];
+	char *netFilePath = argv[2];
+    char *defFilePath = argv[3];
 
     readJsonFiles(blockFilePath, netFilePath, blockList, nets);
     readDefFile(defFilePath, components, regions, num_Comp, UNITS_DISTANCE_MICRONS, diearea);
-    cout << "unit_main: " << UNITS_DISTANCE_MICRONS << endl;
 
     // File path for individual DEF of component
     vector<string> compFilePaths(num_Comp);
@@ -183,8 +185,6 @@ int main() {
 
 
     // Build Block
-    // vector<Block> blockList;
-
     updateBlocksWithVertices(blockList, components, onlyblocks);
 
     // Print blockList for verification

@@ -105,7 +105,7 @@ void readDefFile(const string& defFilePath, vector<Component>& components, vecto
 
 
     while (getline(defFile, line)) {
-        if (line.find("END COMPONENTS") != std::string::npos) {
+        if (line.find("END COMPONENTS") != string::npos) {
             break;
         }
         if (line[0] == '-') {
@@ -196,10 +196,10 @@ void completeRectangle(OnlyBlock& block) {
 void WidthHeight(OnlyBlock& onlyb) {
 
     // Initialize the MIN and MAX of X and Y axis
-    // float minX = LONG_MAX, maxX = LONG_MIN;
-    // float minY = LONG_MAX, maxY = LONG_MIN;
-    float minX = 10000000.0, maxX = 0.0001;
-    float minY = 10000000.0, maxY = 0.0001;
+    float minX = LONG_MAX, maxX = LONG_MIN;
+    float minY = LONG_MAX, maxY = LONG_MIN;
+    // float minX = 10000000.0, maxX = 0.0001;
+    // float minY = 10000000.0, maxY = 0.0001;
 
     //for (auto& block : onlyb) {
         for (const auto& vertex : onlyb.vertices) {
@@ -238,7 +238,7 @@ void readCompFile(const string& compFilePath, vector<OnlyBlock>& onlyblocks) {
         if (line1.find("DESIGN") != string::npos) {
             iss >> temp1 >> onlyb.name;
         }
-        if (line1.find("DIEAREA") != std::string::npos) {
+        if (line1.find("DIEAREA") != string::npos) {
             istringstream iss(line1);
             string token;
 
