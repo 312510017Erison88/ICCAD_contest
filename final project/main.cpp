@@ -239,17 +239,40 @@ int main(int argc, char *argv[]) {
     pathfile.close();
 
 
+    // // output plotting csv file, called "blocks.csv"
+    // ofstream file("blocks.csv");
+    // for (const auto& block : blockList) {
+    //     file << block.block_name << ",";
+    //     for (const auto& pt : block.vertices) {
+    //         file << pointToString(pt);
+    //         file << ",";
+    //     }
+    //     file << "\n";
+    // }
+    // file.close();
+
     // output plotting csv file, called "blocks.csv"
-    ofstream file("blocks.csv");
+    ofstream feedthroughfile("blocks_feedthrough.csv");
+    ofstream nonfeedthroughfile("blocks_nonfeedthrough.csv");
     for (const auto& block : blockList) {
-        file << block.block_name << ",";
-        for (const auto& pt : block.vertices) {
-            file << pointToString(pt);
-            file << ",";
+        if (block.is_feedthroughable == true) {
+            feedthroughfile << block.block_name << ",";
+            for (const auto& pt : block.vertices) {
+                feedthroughfile << pointToString(pt);
+                feedthroughfile << ",";
+            }
+            feedthroughfile << "\n";
+        } else {
+            nonfeedthroughfile << block.block_name << ",";
+            for (const auto& pt : block.vertices) {
+                nonfeedthroughfile << pointToString(pt);
+                nonfeedthroughfile << ",";
+            }
+            nonfeedthroughfile << "\n";
         }
-        file << "\n";
     }
-    file.close();
+    feedthroughfile.close();
+    nonfeedthroughfile.close();
 
     // output plotting csv file, called "regions.csv"
     ofstream regionfile("regions.csv");
