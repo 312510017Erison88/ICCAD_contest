@@ -12,16 +12,16 @@
 
 using namespace std;
 
-struct Point_2 {
-    int x, y;
-    bool operator==(const Point_2& other) const {
-        return x == other.x && y == other.y;
-    }
-     // Define comparison operators for use in std::map
-    bool operator<(const Point_2& other) const {
-        return tie(x, y) < tie(other.x, other.y);
-    }
-};
+// struct Point_2 {
+//     int x, y;
+//     bool operator==(const Point_2& other) const {
+//         return x == other.x && y == other.y;
+//     }
+//      // Define comparison operators for use in std::map
+//     bool operator<(const Point_2& other) const {
+//         return tie(x, y) < tie(other.x, other.y);
+//     }
+// };
 
 
 struct Cell {
@@ -44,12 +44,15 @@ using EdgeMap = unordered_map<Coordinate, int>;
 
 
 void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<int, int>, int, pair_hash> &edgeMap, unordered_map<int, Block> &blockMap);
+void populateRegionMaps(vector<Region> regions, unordered_map<int, Region> &regionMap);
+Point convertPoint(const Point &point, const vector<float> &coord);
+Point getReferencePoint(const string &identifier, unordered_map<int, Block>& blockMap, unordered_map<int, Region>& regionMap);
 bool isValid(int x, int y, int rows, int cols);
-bool isPointInsideBlock(const Point_2& pt, const Block& block);
-bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net);
-vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL);
-vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent);
-void printPath(const vector<Point_2>& path, ofstream& file);
+bool isPointInsideBlock(const Point& pt, const Block& block);
+bool canMove(const Point& from, const Point& to, const vector<Block>& blockList, const Net& net);
+vector<Point> BFS(Point start, Point goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL);
+vector<Point> backtrack(Point start, Point goal, const map<Point, Point>& parent);
+void printPath(const vector<Point>& path, ofstream& file);
 
 
 #endif

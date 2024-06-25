@@ -10,8 +10,14 @@
 using namespace std;
 
 struct Point {
-    int x;
-    int y;
+    int x, y;
+    bool operator==(const Point& other) const {
+        return x == other.x && y == other.y;
+    }
+     // Define comparison operators for use in std::map
+    bool operator<(const Point& other) const {
+        return tie(x, y) < tie(other.x, other.y);
+    }
 };
 
 struct Block {
