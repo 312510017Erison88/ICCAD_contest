@@ -7,8 +7,9 @@
 #include <map>
 #include "readfile.h"
 // #include "linesearch.h"
-#include "BFS.h"
+// #include "BFS.h"
 // #include "Astar.h"
+#include "Greedy.h"
 
 using namespace std;
 
@@ -30,11 +31,6 @@ int main(int argc, char *argv[]) {
     int UNITS_DISTANCE_MICRONS = 0;
     DieArea diearea;
     vector<OnlyBlock> onlyblocks;
-
-    // File path
-    // string blockFilePath = "case4/case4_cfg.json";
-    // string netFilePath = "case4/case4_small.json";
-    // string defFilePath = "case4/case4_def/chip_top.def";
 
     char *blockFilePath = argv[1];
     char *netFilePath = argv[2];
@@ -105,8 +101,10 @@ int main(int argc, char *argv[]) {
 
 
     // perform BFS
-    unordered_map<pair<int, int>, int, pair_hash> edgeMap;
-    unordered_map<int, Block> blockMap;
+    // unordered_map<pair<int, int>, int, pair_hash> edgeMap;
+    // unordered_map<int, Block> blockMap;
+    EdgeMap edgeMap;
+    BlockMap blockMap;
     unordered_map<int, Region> regionMap;
     map<int, vector<vector<Point>>> netPaths;
 
@@ -124,9 +122,10 @@ int main(int argc, char *argv[]) {
             cout << "Goal Point for Net " << net.ID << " RX " << i << ": (" << goal.x << ", " << goal.y << ")" << endl;
 
             // 此處可以加入 BFS 或 A* 路徑查找代碼
+            vector<Point> path = Greedy(start, goal, edgeMap, blockMap, net, ROW, COL);
             // vector<Point> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
             // vector<Point> path = AStar(start, goal, blockList, net, ROW, COL);
-            // netPaths[net.ID].push_back(path);
+            netPaths[net.ID].push_back(path);
         }
     }
 
