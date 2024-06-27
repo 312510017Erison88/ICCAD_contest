@@ -32,11 +32,13 @@ int main(int argc, char *argv[]) {
     DieArea diearea;
     vector<OnlyBlock> onlyblocks;
 
-    char *defFilePath = argv[1];
-    char *blockFilePath = argv[2];
-    char *netFilePath = argv[3];
-    char *defDirPath = argv[4];
-
+    int tracks = atoi(argv[1]);  // (tracks/um)
+    char *defDirPath = argv[2];
+    char *blockFilePath = argv[3];
+    char *netFilePath = argv[4];
+    
+    char defFilePath[512];  
+    snprintf(defFilePath, sizeof(defFilePath), "%s/chip_top.def", defDirPath);
     readJsonFiles(blockFilePath, netFilePath, blockList, nets);
     readDefFile(defFilePath, components, regions, num_Comp, UNITS_DISTANCE_MICRONS, diearea);
 
