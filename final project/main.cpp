@@ -32,9 +32,9 @@ int main(int argc, char *argv[]) {
     DieArea diearea;
     vector<OnlyBlock> onlyblocks;
 
-    char *blockFilePath = argv[1];
-    char *netFilePath = argv[2];
-    char *defFilePath = argv[3];
+    char *defFilePath = argv[1];
+    char *blockFilePath = argv[2];
+    char *netFilePath = argv[3];
     char *defDirPath = argv[4];
 
     readJsonFiles(blockFilePath, netFilePath, blockList, nets);
