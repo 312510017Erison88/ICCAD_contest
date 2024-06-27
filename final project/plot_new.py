@@ -56,32 +56,28 @@ with open('regions.csv', 'r') as file:
 
 
         
-# nets = []
-# with open('path.csv', 'r') as file:
-#     current_net = None
-#     for line in file:
-#         line = line.strip()
-#         if line.startswith('Net ID:'):
-#             if current_net:
-#                 nets.append(current_net)
-#             current_net = {'net_id': line.split(':')[1].strip(), 'paths': []}
-#         elif line:
-#             points = line.split(',')
-#             path = []
-#             for point in points:
-#                 try:
-#                     x, y = point.split(';')
-#                     path.append((int(x), int(y)))
-#                 except ValueError:
-#                     print(f"Issue with point: {point}. Skipping.")
-#             if path:
-#                 current_net['paths'].append(path)
-#     if current_net:  # append the last net if exists
-#         nets.append(current_net)
-
-
-
-
+nets = []
+with open('path.csv', 'r') as file:
+    current_net = None
+    for line in file:
+        line = line.strip()
+        if line.startswith('Net ID:'):
+            if current_net:
+                nets.append(current_net)
+            current_net = {'net_id': line.split(':')[1].strip(), 'paths': []}
+        elif line:
+            points = line.split(',')
+            path = []
+            for point in points:
+                try:
+                    x, y = point.split(';')
+                    path.append((int(x), int(y)))
+                except ValueError:
+                    print(f"Issue with point: {point}. Skipping.")
+            if path:
+                current_net['paths'].append(path)
+    if current_net:  # append the last net if exists
+        nets.append(current_net)
 
 
 
@@ -94,27 +90,27 @@ fig, ax = plt.subplots(dpi=2000)   ## 2000dpi for suggestion
 ## 繪製每個區塊
 for block in blocks:
     vertices = block['vertices']
-    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='b', linewidth=0.1)
+    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='b', linewidth=0.01)
     ax.add_patch(polygon)
     # 標示區塊名稱
-    centroid_x = sum([v[0] for v in vertices]) / len(vertices)
-    centroid_y = sum([v[1] for v in vertices]) / len(vertices)
-    ax.text(centroid_x, centroid_y, block['block_name'], ha='center', va='center', fontsize=2)
+    # centroid_x = sum([v[0] for v in vertices]) / len(vertices)
+    # centroid_y = sum([v[1] for v in vertices]) / len(vertices)
+    # ax.text(centroid_x, centroid_y, block['block_name'], ha='center', va='center', fontsize=2)
 
 for nonfeedblock in nonfeedblocks:
     vertices = nonfeedblock['vertices']
-    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='m', linewidth=0.1)
+    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='k', linewidth=0.01)
     ax.add_patch(polygon)
     # 標示區塊名稱
-    centroid_x = sum([v[0] for v in vertices]) / len(vertices)
-    centroid_y = sum([v[1] for v in vertices]) / len(vertices)
-    ax.text(centroid_x, centroid_y, nonfeedblock['block_name'], ha='center', va='center', fontsize=2)
+    # centroid_x = sum([v[0] for v in vertices]) / len(vertices)
+    # centroid_y = sum([v[1] for v in vertices]) / len(vertices)
+    # ax.text(centroid_x, centroid_y, nonfeedblock['block_name'], ha='center', va='center', fontsize=2)
 
 
 ## 繪製每個區塊
 for region in regions:
     vertices = region['vertices']
-    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='g', linewidth=0.1)
+    polygon = patches.Polygon(vertices, closed=True, fill=None, edgecolor='g', linewidth=0.01)
     ax.add_patch(polygon)
     # # 標示區塊名稱
     # centroid_x = sum([v[0] for v in vertices]) / len(vertices)
@@ -133,12 +129,12 @@ for region in regions:
 # ]
 
 
-# # 繪製每個net的路徑
-# for net in nets:
-#     for path in net['paths']:
-#         x_vals, y_vals = zip(*path)
-#         line = mlines.Line2D(x_vals, y_vals, linewidth=1, color='r')
-#         ax.add_line(line)
+# 繪製每個net的路徑
+for net in nets:
+    for path in net['paths']:
+        x_vals, y_vals = zip(*path)
+        line = mlines.Line2D(x_vals, y_vals, linewidth=0.05, color='r')
+        ax.add_line(line)
 
 
 

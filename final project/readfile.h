@@ -39,7 +39,7 @@ struct Block {
     string block_name;
     int through_block_net_num;      // max num that net can feedthrough
     vector<int> through_block_edge_net_num;     
-    vector<int> block_port_region;     // ä»»ï¿½??Netï¿??ï¿???????????blockï¿??å°±ï¿½??ï¿??ï¿??ï¿??block_port_regionï¿?????, ï¿???????ï¿½ç©ºå°±don't care
+    vector<int> block_port_region;   
     bool is_feedthroughable;        // this block feedthrough or not
     bool is_tile;                   // don't care
     Point position;

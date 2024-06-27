@@ -13,7 +13,7 @@
 
 using namespace std;
 
-
+int UNITS_DISTANCE_MICRONS;
 // function used in output of plotting csv file
 string pointToString(const Point& point) {
     ostringstream oss;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     vector<Component> components;
     vector<Region> regions;
     int num_Comp = 0;
-    int UNITS_DISTANCE_MICRONS = 0;
+    // int UNITS_DISTANCE_MICRONS = 0;
     DieArea diearea;
     vector<OnlyBlock> onlyblocks;
 
@@ -112,16 +112,15 @@ int main(int argc, char *argv[]) {
     populateRegionMaps(regions, regionMap);
 
     for (const auto& net : nets) {
-        // 處理 TX
+        // TX
         Point start = convertPoint(getReferencePoint(net.TX, blockMap, regionMap), net.TX_COORD);
         cout << "Start Point for Net " << net.ID << ": (" << start.x << ", " << start.y << ")" << endl;
 
-        // 處理每個 RX
+        // RX
         for (size_t i = 0; i < net.RX.size(); ++i) {
             Point goal = convertPoint(getReferencePoint(net.RX[i], blockMap, regionMap), net.RX_COORD[i]);
             cout << "Goal Point for Net " << net.ID << " RX " << i << ": (" << goal.x << ", " << goal.y << ")" << endl;
 
-            // 此處可以加入 BFS 或 A* 路徑查找代碼
             vector<Point> path = Greedy(start, goal, edgeMap, blockMap, net, ROW, COL);
             // vector<Point> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
             // vector<Point> path = AStar(start, goal, blockList, net, ROW, COL);

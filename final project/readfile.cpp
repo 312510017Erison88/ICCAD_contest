@@ -97,16 +97,6 @@ void readDefFile(const std::string& defFilePath, std::vector<Component>& compone
     }
 
 
-    // std::string line;
-    // while (std::getline(defFile, line)) {
-    //     if (line.find("COMPONENTS") != std::string::npos) {
-    //         std::istringstream iss(line);
-    //         std::string temp;
-    //         iss >> temp >> num_Comp;
-    //         break;
-    //     }
-    // }
-
 
     while (std::getline(defFile, line)) {
         if (line.find("END COMPONENTS") != std::string::npos) {

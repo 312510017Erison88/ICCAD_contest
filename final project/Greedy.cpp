@@ -30,11 +30,23 @@ vector<Point> Greedy(Point start, Point goal, const EdgeMap& edgeMap, BlockMap& 
         Point nextStep = current;
         double minDist = numeric_limits<double>::max();
 
+        // // new
+        // for (const auto& [dx, dy] : vector<pair<int, int>>{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}) {
+        //     Point next = {current.x + dx, current.y + dy};
+        //     if (isValid(next.x, next.y, ROW, COL) && canMove(current, next, edgeMap, blockMap, net)) {
+        //         double dist = sqrt(pow(next.x - goal.x, 2) + pow(next.y - goal.y, 2));
+        //         if (dist < minDist) {
+        //             minDist = dist;
+        //             nextStep = next;
+        //         }
+        //     }
+        // }
+
         for (int dx : {1, -1, 0, 0}) {
             for (int dy : {0, 0, 1, -1}) {
                 Point next = {current.x + dx, current.y + dy};
                 if (isValid(next.x, next.y, ROW, COL) && canMove(current, next, edgeMap, blockMap, net)) {
-                    double dist = sqrt(pow(next.x - goal.x, 2) + pow(next.y - goal.y, 2));
+                    double dist = pow(next.x - goal.x, 2) + pow(next.y - goal.y, 2);
                     if (dist < minDist) {
                         minDist = dist;
                         nextStep = next;
@@ -86,17 +98,17 @@ void populateRegionMaps(vector<Region> regions, RegionMap& regionMap) {
 }
 
 Point convertPoint(const Point &point, const vector<float> &coord) {
-    return Point{point.x + static_cast<int>(coord[0])*2000, point.y + static_cast<int>(coord[1])*2000};
+    return Point{point.x + static_cast<int>(coord[0])*UNITS_DISTANCE_MICRONS, point.y + static_cast<int>(coord[1])*UNITS_DISTANCE_MICRONS};
 }
 
 Point getReferencePoint(const string &identifier, BlockMap& blockMap, RegionMap& regionMap) {
     if (identifier.find("BLOCK_") == 0) {
-        int blockId = stoi(identifier.substr(6)); // "BLOCK_" 的長度是 6
+        int blockId = stoi(identifier.substr(6)); // "BLOCK_"  6
         if (blockMap.find(blockId) != blockMap.end()) {
             return {blockMap[blockId].position.x, blockMap[blockId].position.y};
         }
     } else if (identifier.find("REGION_") == 0) {
-        int regionId = stoi(identifier.substr(7)); // "REGION_" 的長度是 7
+        int regionId = stoi(identifier.substr(7)); // "REGION_"  7
         if (regionMap.find(regionId) != regionMap.end()) {
             return {regionMap[regionId].vertices[0].x, regionMap[regionId].vertices[0].y};
         }
