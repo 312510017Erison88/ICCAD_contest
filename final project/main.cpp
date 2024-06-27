@@ -7,8 +7,9 @@
 #include <map>
 #include "readfile.h"
 // #include "linesearch.h"
-#include "BFS.h"
+// #include "BFS.h"
 // #include "Astar.h"
+#include "Greedy.h"
 
 using namespace std;
 
@@ -30,11 +31,6 @@ int main(int argc, char *argv[]) {
     int UNITS_DISTANCE_MICRONS = 0;
     DieArea diearea;
     vector<OnlyBlock> onlyblocks;
-
-    // File path
-    // string blockFilePath = "case4/case4_cfg.json";
-    // string netFilePath = "case4/case4_small.json";
-    // string defFilePath = "case4/case4_def/chip_top.def";
 
     char *blockFilePath = argv[1];
     char *netFilePath = argv[2];
@@ -107,29 +103,52 @@ int main(int argc, char *argv[]) {
     // perform BFS
     // unordered_map<pair<int, int>, int, pair_hash> edgeMap;
     // unordered_map<int, Block> blockMap;
-    // map<int, vector<vector<Point_2>>> netPaths;
+    EdgeMap edgeMap;
+    BlockMap blockMap;
+    unordered_map<int, Region> regionMap;
+    map<int, vector<vector<Point>>> netPaths;
 
-    // populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
+    populateEdgeAndBlockMaps(blockList, edgeMap, blockMap);
+    populateRegionMaps(regions, regionMap);
+
+    for (const auto& net : nets) {
+        // 處理 TX
+        Point start = convertPoint(getReferencePoint(net.TX, blockMap, regionMap), net.TX_COORD);
+        cout << "Start Point for Net " << net.ID << ": (" << start.x << ", " << start.y << ")" << endl;
+
+        // 處理每個 RX
+        for (size_t i = 0; i < net.RX.size(); ++i) {
+            Point goal = convertPoint(getReferencePoint(net.RX[i], blockMap, regionMap), net.RX_COORD[i]);
+            cout << "Goal Point for Net " << net.ID << " RX " << i << ": (" << goal.x << ", " << goal.y << ")" << endl;
+
+            // 此處可以加入 BFS 或 A* 路徑查找代碼
+            vector<Point> path = Greedy(start, goal, edgeMap, blockMap, net, ROW, COL);
+            // vector<Point> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
+            // vector<Point> path = AStar(start, goal, blockList, net, ROW, COL);
+            netPaths[net.ID].push_back(path);
+        }
+    }
 
     // for (const auto& net : nets) {
-    //     Point_2 start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
+    //     Point start = {static_cast<int>(net.TX_COORD[0]), static_cast<int>(net.TX_COORD[1])};
     //     for (const auto& rx_coord : net.RX_COORD) {
-    //         Point_2 goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
-    //         vector<Point_2> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
-    //         // vector<Point_2> path = AStar(start, goal, blockList, net, ROW, COL);
+    //         Point goal = {static_cast<int>(rx_coord[0]), static_cast<int>(rx_coord[1])};
+    //         vector<Point> path = BFS(start, goal, edgeMap, blockMap, net, ROW, COL);
+    //         // vector<Point> path = AStar(start, goal, blockList, net, ROW, COL);
     //         netPaths[net.ID].push_back(path);
     //     }
     // }
+
     // print all stored paths
-    // ofstream pathfile("path.csv");
-    // for (const auto& netPath : netPaths) {
-    //     pathfile << "Net ID: " << netPath.first << endl;
-    //     for (const auto& path : netPath.second) {
-    //         printPath(path, pathfile);
-    //     }
-        
-    // }
-    // pathfile.close();
+    ofstream pathfile("path.csv");
+    for (const auto& netPath : netPaths) {
+        pathfile << "Net ID: " << netPath.first << endl;
+        for (const auto& path : netPath.second) {
+            printPath(path, pathfile);
+        }
+     
+    }
+    pathfile.close();
 
 
     // // output plotting csv file, called "blocks.csv"

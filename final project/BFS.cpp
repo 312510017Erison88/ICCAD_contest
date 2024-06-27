@@ -21,13 +21,39 @@ void populateEdgeAndBlockMaps(vector<Block> blockList, unordered_map<pair<int, i
     }
 }
 
+void populateRegionMaps(vector<Region> regions, unordered_map<int, Region> &regionMap) {
+    for (size_t i = 0; i < regions.size(); ++i) {
+        const Region& reg = regions[i];
+        regionMap[i] = reg;
+    }
+}
+
+Point convertPoint(const Point &point, const vector<float> &coord) {
+    return Point{point.x + static_cast<int>(coord[0])*2000, point.y + static_cast<int>(coord[1])*2000};
+}
+
+Point getReferencePoint(const string &identifier, unordered_map<int, Block>& blockMap, unordered_map<int, Region>& regionMap) {
+    if (identifier.find("BLOCK_") == 0) {
+        int blockId = stoi(identifier.substr(6)); // "BLOCK_" 的長度是 6
+        if (blockMap.find(blockId) != blockMap.end()) {
+            return {blockMap[blockId].position.x, blockMap[blockId].position.y};
+        }
+    } else if (identifier.find("REGION_") == 0) {
+        int regionId = stoi(identifier.substr(7)); // "REGION_" 的長度是 7
+        if (regionMap.find(regionId) != regionMap.end()) {
+            return {regionMap[regionId].vertices[0].x, regionMap[regionId].vertices[0].y};
+        }
+    }
+    return Point{0, 0}; // Default fallback, in case identifier not found
+}
+
 bool isValid(int x, int y, int rows, int cols) {
     return x >= 0 && x < rows && y >= 0 && y < cols;
 }
 
 
 // ray-casting algorithm
-bool isPointInsideBlock(const Point_2& pt, const Block& block) {
+bool isPointInsideBlock(const Point& pt, const Block& block) {
     // Check if the point is within the bounding box of the polygon
     int min_x = block.vertices[0].x, max_x = block.vertices[0].x;
     int min_y = block.vertices[0].y, max_y = block.vertices[0].y;
@@ -56,7 +82,7 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block) {
     return inside;
 }
 
-// bool canMove(const Point_2& from, const Point_2& to, const vector<Block>& blockList, const Net& net) {
+// bool canMove(const Point& from, const Point& to, const vector<Block>& blockList, const Net& net) {
 //     for (const auto& block : blockList) {
 //         if (isPointInsideBlock(to, block)) {
 //             if (!block.is_feedthroughable || (block.through_block_edge_net_num.size() > 0 
@@ -70,7 +96,7 @@ bool isPointInsideBlock(const Point_2& pt, const Block& block) {
 //     return true;
 // }
 
-bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net) {
+bool canMove(const Point& from, const Point& to, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net) {
     if (edgeMap.find({to.x, to.y}) != edgeMap.end()) {
         int blockId = edgeMap.at({to.x, to.y});
         const Block& block = blockMap.at(blockId);
@@ -82,14 +108,14 @@ bool canMove(const Point_2& from, const Point_2& to, const unordered_map<pair<in
 }
 
 
-vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL) {
+vector<Point> BFS(Point start, Point goal, const unordered_map<pair<int, int>, int, pair_hash>& edgeMap, unordered_map<int, Block>& blockMap, const Net& net, int ROW, int COL) {
     queue<Cell> q;
-    map<Point_2, int> dist;
-    map<Point_2, Point_2> parent;
+    map<Point, int> dist;
+    map<Point, Point> parent;
 
     q.push(Cell{start.x, start.y, 0});
     dist[start] = 0;
-    parent[start] = Point_2{-1, -1};
+    parent[start] = Point{-1, -1};
 
     while (!q.empty()) {
         Cell current = q.front();
@@ -98,11 +124,11 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, i
         if (current.x == goal.x && current.y == goal.y) break;
 
         for (int i = 0; i < 4; i++) {
-            Point_2 next = {current.x + dx[i], current.y + dy[i]};
+            Point next = {current.x + dx[i], current.y + dy[i]};
 
-            if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, edgeMap, blockMap, net) && dist.find(next) == dist.end()) {
-                dist[next] = dist[Point_2{current.x, current.y}] + 1;
-                parent[next] = Point_2{current.x, current.y};
+            if (isValid(next.x, next.y, ROW, COL) && canMove(Point{current.x, current.y}, next, edgeMap, blockMap, net) && dist.find(next) == dist.end()) {
+                dist[next] = dist[Point{current.x, current.y}] + 1;
+                parent[next] = Point{current.x, current.y};
                 q.push(Cell{next.x, next.y, dist[next]});
 
                 if (edgeMap.find({next.x, next.y}) != edgeMap.end()) {
@@ -117,14 +143,14 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, i
     return backtrack(start, goal, parent);
 }
 
-// vector<Point_2> BFS(Point_2 start, Point_2 goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
+// vector<Point> BFS(Point start, Point goal, const vector<Block>& blockList, const Net& net, int ROW, int COL) {
 //     queue<Cell> q;
-//     map<Point_2, int> dist;
-//     map<Point_2, Point_2> parent;
+//     map<Point, int> dist;
+//     map<Point, Point> parent;
 
 //     q.push(Cell{start.x, start.y, 0});
 //     dist[start] = 0;
-//     parent[start] = Point_2{-1, -1};
+//     parent[start] = Point{-1, -1};
 
 //     while (!q.empty()) {
 //         Cell current = q.front();
@@ -133,11 +159,11 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, i
 //         if (current.x == goal.x && current.y == goal.y) break;
         
 //         for (int i = 0; i < 4; i++) {
-//             Point_2 next = {current.x + dx[i], current.y + dy[i]};
+//             Point next = {current.x + dx[i], current.y + dy[i]};
             
-//             if (isValid(next.x, next.y, ROW, COL) && canMove(Point_2{current.x, current.y}, next, blockList, net) && dist.find(next) == dist.end()) {
-//                 dist[next] = dist[Point_2{current.x, current.y}] + 1;
-//                 parent[next] = Point_2{current.x, current.y};
+//             if (isValid(next.x, next.y, ROW, COL) && canMove(Point{current.x, current.y}, next, blockList, net) && dist.find(next) == dist.end()) {
+//                 dist[next] = dist[Point{current.x, current.y}] + 1;
+//                 parent[next] = Point{current.x, current.y};
 //                 q.push(Cell{next.x, next.y, dist[next]});
 //             }
 //         }
@@ -146,16 +172,16 @@ vector<Point_2> BFS(Point_2 start, Point_2 goal, const unordered_map<pair<int, i
 //     return backtrack(start, goal, parent);
 // }
 
-vector<Point_2> backtrack(Point_2 start, Point_2 goal, const map<Point_2, Point_2>& parent) {
-    vector<Point_2> path;
-    for (Point_2 at = goal; at.x != -1; at = parent.at(at)) {
+vector<Point> backtrack(Point start, Point goal, const map<Point, Point>& parent) {
+    vector<Point> path;
+    for (Point at = goal; at.x != -1; at = parent.at(at)) {
         path.push_back(at);
     }
     reverse(path.begin(), path.end());
     return path;
 }
 
-void printPath(const vector<Point_2>& path, ofstream& file) {
+void printPath(const vector<Point>& path, ofstream& file) {
     for (const auto& point : path) {
         file << point.x << ";" << point.y << ",";
     }

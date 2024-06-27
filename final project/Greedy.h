@@ -14,6 +14,7 @@
 
 using namespace std;
 
+<<<<<<< HEAD
 struct Point_2 {
     int x, y;
     bool operator==(const Point_2& other) const {
@@ -28,6 +29,22 @@ struct Point_2 {
         return !(*this == other);
     }
 };
+=======
+// struct Point {
+//     int x, y;
+//     bool operator==(const Point& other) const {
+//         return x == other.x && y == other.y;
+//     }
+//      // Define comparison operators for use in std::map
+//     bool operator<(const Point& other) const {
+//         return tie(x, y) < tie(other.x, other.y);
+//     }
+// 
+//     bool operator!=(const Point& other) const {
+//         return !(*this == other);
+//     }
+// };
+>>>>>>> 3e983ac7dcda8e83d7ea9544863d89f7ef487a4a
 
 
 struct Cell {
@@ -47,6 +64,7 @@ struct pair_hash {
 using Coordinate = pair<int, int>;
 using BlockMap = unordered_map<int, Block>;
 using EdgeMap = unordered_map<Coordinate, int, pair_hash>;
+<<<<<<< HEAD
 
 bool isValid(int x, int y, int rows, int cols);
 bool canMove(const Point_2& from, const Point_2& to, const EdgeMap& edgeMap, BlockMap& blockMap, const Net& net);
@@ -54,6 +72,19 @@ int manhattanDistance(const Point_2& a, const Point_2& b);
 vector<Point_2> Greedy(Point_2 start, Point_2 goal, const EdgeMap& edgeMap, BlockMap& blockMap, const Net& net, int ROW, int COL);
 void printPath(const vector<Point_2>& path, ofstream& file);
 void populateEdgeAndBlockMaps(const vector<Block>& blockList, EdgeMap& edgeMap, BlockMap& blockMap);
+=======
+using RegionMap = unordered_map<int, Region>;
+
+bool isValid(int x, int y, int rows, int cols);
+bool canMove(const Point& from, const Point& to, const EdgeMap& edgeMap, BlockMap& blockMap, const Net& net);
+int manhattanDistance(const Point& a, const Point& b);
+vector<Point> Greedy(Point start, Point goal, const EdgeMap& edgeMap, BlockMap& blockMap, const Net& net, int ROW, int COL);
+void printPath(const vector<Point>& path, ofstream& file);
+void populateEdgeAndBlockMaps(const vector<Block>& blockList, EdgeMap& edgeMap, BlockMap& blockMap);
+void populateRegionMaps(vector<Region> regions, RegionMap& regionMap);
+Point convertPoint(const Point &point, const vector<float> &coord);
+Point getReferencePoint(const string &identifier, BlockMap& blockMap, RegionMap& regionMap);
+>>>>>>> 3e983ac7dcda8e83d7ea9544863d89f7ef487a4a
 
 
 #endif
